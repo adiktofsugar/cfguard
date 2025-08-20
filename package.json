@@ -1,0 +1,33 @@
+{
+  "name": "cfguard",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently npm:watch npm:dev-server",
+    "dev-server": "tsx scripts/dev-server.mts",
+    "build": "tsx scripts/build.mts",
+    "watch": "tsx scripts/build.mts --watch",
+    "lint": "biome check .",
+    "fix": "biome check --write ."
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "preact": "^10.19.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
+    "@cloudflare/workers-types": "^4.20250820.0",
+    "@tsconfig/node22": "^22.0.2",
+    "@types/minimist": "^1.2.5",
+    "@types/node": "^22.17.2",
+    "concurrently": "^9.2.0",
+    "esbuild": "^0.25.9",
+    "esbuild-html-link": "^1.1.0",
+    "miniflare": "^4.20250816.0",
+    "minimist": "^1.2.8",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  }
+}
