@@ -21,7 +21,7 @@ interface JWKWithKid extends JsonWebKey {
 }
 
 async function exportJWK(key: CryptoKey): Promise<JWKWithKid> {
-  const jwk = await crypto.subtle.exportKey("jwk", key) as JWKWithKid;
+  const jwk = (await crypto.subtle.exportKey("jwk", key)) as JWKWithKid;
   jwk.kid = crypto.randomUUID();
   jwk.use = "sig";
   jwk.alg = "RS256";
@@ -330,7 +330,7 @@ export default {
       const grantType = formData.get("grant_type");
       const code = formData.get("code") as string;
       const clientId = formData.get("client_id") as string;
-      const clientSecret = formData.get("client_secret") as string;
+      const _clientSecret = formData.get("client_secret") as string;
       const redirectUri = formData.get("redirect_uri") as string;
 
       if (grantType !== "authorization_code") {

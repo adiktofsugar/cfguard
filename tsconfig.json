@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./sites/hello-preact" },
+    { "path": "./sites/hello-preact/worker" },
+    { "path": "./sites/login/worker" }
+  ]
+}

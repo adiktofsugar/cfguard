@@ -8,8 +8,10 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "lint": "biome check .",
-    "fix": "biome check --write .",
+    "lint": "concurrently -gr npm:lint:*",
+    "lint:biome": "biome check",
+    "lint:tsc": "tsc --build",
+    "fix": "biome check --fix --unsafe .",
     "deploy": "turbo run deploy"
   },
   "author": "",

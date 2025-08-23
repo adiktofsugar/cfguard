@@ -9,6 +9,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"]
-  }
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "composite": true,
+    "noEmit": true
+  },
+  "include": ["*.ts", "*.tsx", "*.mts"],
+  "exclude": ["worker/**/*", "dist/**/*", "node_modules/**/*"]
 }
