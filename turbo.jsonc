@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/turbo/schema.json",
+  "ui": "tui",
+  "dangerouslyDisablePackageManagerCheck": true,
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "outputs": ["dist"]
+    },
+    "deploy": {
+      "cache": false
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@sites/login",
+  "version": "1.0.0",
+  "description": "The login oidc provider",
+  "main": "index.ts",
+  "scripts": {
+    "test": "tsx --test"
+  },
+  "author": "",
+  "license": "ISC"
+}

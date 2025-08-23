@@ -1,7 +1,9 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
-    "useIgnoreFile": true
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "enabled": true
   },
   "linter": {
     "enabled": true,
