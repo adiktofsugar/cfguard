@@ -5,7 +5,9 @@
   "main": "worker/index.ts",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
   },
   "author": "",
   "license": "ISC"
