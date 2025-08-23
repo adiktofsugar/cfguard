@@ -16,8 +16,12 @@ async function generateRSAKeyPair(): Promise<CryptoKeyPair> {
   );
 }
 
-async function exportJWK(key: CryptoKey): Promise<JsonWebKey> {
-  const jwk = await crypto.subtle.exportKey("jwk", key);
+interface JWKWithKid extends JsonWebKey {
+  kid?: string;
+}
+
+async function exportJWK(key: CryptoKey): Promise<JWKWithKid> {
+  const jwk = await crypto.subtle.exportKey("jwk", key) as JWKWithKid;
   jwk.kid = crypto.randomUUID();
   jwk.use = "sig";
   jwk.alg = "RS256";
@@ -26,7 +30,7 @@ async function exportJWK(key: CryptoKey): Promise<JsonWebKey> {
 
 async function getOrCreateKeyPair(
   env: Env,
-): Promise<{ privateKey: CryptoKey; publicJwk: JsonWebKey }> {
+): Promise<{ privateKey: CryptoKey; publicJwk: JWKWithKid }> {
   const storedKey = await env.AUTH_STORAGE.get("signing-key.json");
 
   if (storedKey) {
@@ -70,8 +74,8 @@ async function signJWT(payload: any, privateKey: CryptoKey, kid: string): Promis
     kid,
   };
 
-  const encodedHeader = base64UrlEncode(new TextEncoder().encode(JSON.stringify(header)));
-  const encodedPayload = base64UrlEncode(new TextEncoder().encode(JSON.stringify(payload)));
+  const encodedHeader = base64UrlEncode(new TextEncoder().encode(JSON.stringify(header)).buffer);
+  const encodedPayload = base64UrlEncode(new TextEncoder().encode(JSON.stringify(payload)).buffer);
 
   const message = `${encodedHeader}.${encodedPayload}`;
   const signature = await crypto.subtle.sign(
@@ -308,9 +312,7 @@ export default {
         expires: Date.now() + 600000, // 10 minutes
       };
 
-      await env.AUTH_STORAGE.put(`code:${code}`, JSON.stringify(codeData), {
-        expirationTtl: 600,
-      });
+      await env.AUTH_STORAGE.put(`code:${code}`, JSON.stringify(codeData));
 
       // Redirect back to client
       const redirectUrl = new URL(redirectUri);
@@ -380,9 +382,7 @@ export default {
         expires: Date.now() + 3600000, // 1 hour
       };
 
-      await env.AUTH_STORAGE.put(`access_token:${accessToken}`, JSON.stringify(accessTokenData), {
-        expirationTtl: 3600,
-      });
+      await env.AUTH_STORAGE.put(`access_token:${accessToken}`, JSON.stringify(accessTokenData));
 
       const idToken = await signJWT(
         {
@@ -397,7 +397,7 @@ export default {
           preferred_username: codeData.username,
         },
         privateKey,
-        publicJwk.kid!,
+        publicJwk.kid || "",
       );
 
       return new Response(
