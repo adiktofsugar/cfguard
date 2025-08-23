@@ -1,14 +1,14 @@
 export default {
-  fetch(request: Request) {
-    const url = new URL(request.url);
+    fetch(request: Request) {
+        const url = new URL(request.url);
 
-    if (url.pathname.startsWith("/api/")) {
-      return Response.json({
-        name: "Cloudflare",
-        age: 12,
-      });
-    }
+        if (url.pathname.startsWith("/api/")) {
+            return Response.json({
+                name: "Cloudflare",
+                age: 12,
+            });
+        }
 
-    return new Response(null, { status: 404 });
-  },
+        return new Response(null, { status: 404 });
+    },
 };

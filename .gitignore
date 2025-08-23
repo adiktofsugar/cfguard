@@ -149,3 +149,6 @@ vite.config.ts.timestamp-*
 test-results/
 playwright-report/
 playwright/.cache/
+
+# other
+.claude/settings.local.json

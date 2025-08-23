@@ -1,14 +1,14 @@
 {
-  "name": "@sites/login",
-  "version": "1.0.0",
-  "description": "The login oidc provider",
-  "main": "worker/index.ts",
-  "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "test": "playwright test",
-    "test:ui": "playwright test --ui"
-  },
-  "author": "",
-  "license": "ISC"
+    "name": "@sites/login",
+    "version": "1.0.0",
+    "description": "The login oidc provider",
+    "main": "worker/index.ts",
+    "scripts": {
+        "dev": "wrangler dev",
+        "deploy": "wrangler deploy",
+        "test": "playwright test",
+        "test:ui": "playwright test --ui"
+    },
+    "author": "",
+    "license": "ISC"
 }
