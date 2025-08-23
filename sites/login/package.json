@@ -2,9 +2,10 @@
   "name": "@sites/login",
   "version": "1.0.0",
   "description": "The login oidc provider",
-  "main": "index.ts",
+  "main": "worker/index.ts",
   "scripts": {
-    "test": "tsx --test"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
   "author": "",
   "license": "ISC"

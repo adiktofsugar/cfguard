@@ -1,0 +1,17 @@
+{
+  "name": "login",
+  "main": "worker/index.ts",
+  "compatibility_date": "2024-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "r2_buckets": [
+    {
+      "binding": "AUTH_STORAGE",
+      "bucket_name": "cfguard-auth"
+    }
+  ],
+  "vars": {
+    // ISSUER is the base URL of this OIDC provider - used in discovery endpoint
+    // and as the 'iss' claim in JWT tokens to identify who issued the token
+    "ISSUER": "https://auth.sackof.rocks"
+  }
+}
