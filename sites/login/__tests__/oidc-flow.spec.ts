@@ -26,11 +26,11 @@ test.describe("OIDC Provider Flow", () => {
         expect(response.ok()).toBeTruthy();
 
         const config = await response.json();
-        expect(config.issuer).toBe("https://auth.sackof.rocks");
-        expect(config.authorization_endpoint).toBe("https://auth.sackof.rocks/authorize");
-        expect(config.token_endpoint).toBe("https://auth.sackof.rocks/token");
-        expect(config.userinfo_endpoint).toBe("https://auth.sackof.rocks/userinfo");
-        expect(config.jwks_uri).toBe("https://auth.sackof.rocks/.well-known/jwks.json");
+        expect(config.issuer).toBe("https://login.sackof.rocks");
+        expect(config.authorization_endpoint).toBe("https://login.sackof.rocks/authorize");
+        expect(config.token_endpoint).toBe("https://login.sackof.rocks/token");
+        expect(config.userinfo_endpoint).toBe("https://login.sackof.rocks/userinfo");
+        expect(config.jwks_uri).toBe("https://login.sackof.rocks/.well-known/jwks.json");
         expect(config.response_types_supported).toContain("code");
         expect(config.id_token_signing_alg_values_supported).toContain("RS256");
     });
@@ -123,7 +123,7 @@ test.describe("OIDC Provider Flow", () => {
         const idToken = parseJWT(tokens.id_token);
         expect(idToken.header.alg).toBe("RS256");
         expect(idToken.header.typ).toBe("JWT");
-        expect(idToken.payload.iss).toBe("https://auth.sackof.rocks");
+        expect(idToken.payload.iss).toBe("https://login.sackof.rocks");
         expect(idToken.payload.aud).toBe(clientId);
         expect(idToken.payload.sub).toBeTruthy();
         expect(idToken.payload.name).toBe("Admin User");

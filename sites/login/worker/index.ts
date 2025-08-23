@@ -1,7 +1,7 @@
 import type { JWTPayload, UserData } from "./interfaces";
 
 export interface Env {
-    AUTH_STORAGE: R2Bucket;
+    LOGIN_STORAGE: R2Bucket;
     ISSUER: string;
 }
 
@@ -33,7 +33,7 @@ async function exportJWK(key: CryptoKey): Promise<JWKWithKid> {
 async function getOrCreateKeyPair(
     env: Env,
 ): Promise<{ privateKey: CryptoKey; publicJwk: JWKWithKid }> {
-    const storedKey = await env.AUTH_STORAGE.get("signing-key.json");
+    const storedKey = await env.LOGIN_STORAGE.get("signing-key.json");
 
     if (storedKey) {
         const keyData = JSON.parse(await storedKey.text());
@@ -51,7 +51,7 @@ async function getOrCreateKeyPair(
     const privateJwk = await exportJWK(keyPair.privateKey);
     const publicJwk = await exportJWK(keyPair.publicKey);
 
-    await env.AUTH_STORAGE.put(
+    await env.LOGIN_STORAGE.put(
         "signing-key.json",
         JSON.stringify({
             privateJwk,
@@ -282,7 +282,7 @@ export default {
 
             // Check user credentials
             const userKey = `user:${username}`;
-            const userDataObj = await env.AUTH_STORAGE.get(userKey);
+            const userDataObj = await env.LOGIN_STORAGE.get(userKey);
 
             let validLogin = false;
             let userData: UserData | null = null;
@@ -302,7 +302,7 @@ export default {
                     email: "admin@example.com",
                     email_verified: true,
                 };
-                await env.AUTH_STORAGE.put(userKey, JSON.stringify(userData));
+                await env.LOGIN_STORAGE.put(userKey, JSON.stringify(userData));
                 validLogin = true;
             }
 
@@ -323,7 +323,7 @@ export default {
                 expires: Date.now() + 600000, // 10 minutes
             };
 
-            await env.AUTH_STORAGE.put(`code:${code}`, JSON.stringify(codeData));
+            await env.LOGIN_STORAGE.put(`code:${code}`, JSON.stringify(codeData));
 
             // Redirect back to client
             const redirectUrl = new URL(redirectUri);
@@ -352,7 +352,7 @@ export default {
             }
 
             // Verify authorization code
-            const codeDataObj = await env.AUTH_STORAGE.get(`code:${code}`);
+            const codeDataObj = await env.LOGIN_STORAGE.get(`code:${code}`);
             if (!codeDataObj) {
                 return new Response(JSON.stringify({ error: "invalid_grant" }), {
                     status: 400,
@@ -377,7 +377,7 @@ export default {
             }
 
             // Delete used code
-            await env.AUTH_STORAGE.delete(`code:${code}`);
+            await env.LOGIN_STORAGE.delete(`code:${code}`);
 
             // Generate tokens
             const { privateKey, publicJwk } = await getOrCreateKeyPair(env);
@@ -393,7 +393,7 @@ export default {
                 expires: Date.now() + 3600000, // 1 hour
             };
 
-            await env.AUTH_STORAGE.put(
+            await env.LOGIN_STORAGE.put(
                 `access_token:${accessToken}`,
                 JSON.stringify(accessTokenData),
             );
@@ -435,7 +435,7 @@ export default {
             }
 
             const accessToken = authHeader.substring(7);
-            const tokenDataObj = await env.AUTH_STORAGE.get(`access_token:${accessToken}`);
+            const tokenDataObj = await env.LOGIN_STORAGE.get(`access_token:${accessToken}`);
 
             if (!tokenDataObj) {
                 return new Response("Unauthorized", { status: 401 });
