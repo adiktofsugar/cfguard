@@ -4,11 +4,16 @@
     "description": "The login oidc provider",
     "main": "worker/index.ts",
     "scripts": {
-        "dev": "wrangler dev",
+        "build": "vite build",
+        "dev": "vite",
         "deploy": "wrangler deploy",
         "test": "playwright test",
         "test:ui": "playwright test --ui"
     },
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "dependencies": {
+        "@picocss/pico": "^2.1.1",
+        "react-icons": "^5.5.0"
+    }
 }

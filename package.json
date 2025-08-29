@@ -6,7 +6,8 @@
         "sites/*"
     ],
     "scripts": {
-        "dev": "turbo run dev",
+        "dev:login": "npm run -w @sites/login dev",
+        "dev:hello": "npm run -w @sites/hello-world dev",
         "build": "turbo run build",
         "lint": "concurrently -gr npm:lint:*",
         "lint:biome": "biome check",

@@ -3,10 +3,6 @@
     "ui": "tui",
     "dangerouslyDisablePackageManagerCheck": true,
     "tasks": {
-        "dev": {
-            "cache": false,
-            "persistent": true
-        },
         "build": {
             "cache": true,
             "outputs": ["dist"]
