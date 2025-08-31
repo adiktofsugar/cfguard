@@ -1,5 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
-import { FaShield } from "react-icons/fa6";
+import { faShield } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "../../components/FontAwesomeIcon";
 import { ClientGenerator } from "./ClientGenerator";
 
 export default function App() {
@@ -26,7 +27,7 @@ export default function App() {
                 <nav>
                     <ul>
                         <li>
-                            <FaShield />
+                            <FontAwesomeIcon title="CFGuard" icon={faShield} size={24} />
                         </li>
                     </ul>
                     <ul>
