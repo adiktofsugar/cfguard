@@ -1,21 +1,8 @@
-import { useState } from "preact/hooks";
+import { useMemo, useState } from "preact/hooks";
 
 export function ClientGenerator() {
     const [clientName, setClientName] = useState("");
-    const [redirectUris, setRedirectUris] = useState("");
-    const [generated, setGenerated] = useState(false);
-
-    const generateClientId = () => {
-        const array = new Uint8Array(16);
-        crypto.getRandomValues(array);
-        return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
-    };
-
-    const generateClientSecret = () => {
-        const array = new Uint8Array(32);
-        crypto.getRandomValues(array);
-        return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
-    };
+    const [redirectUri, setRedirectUri] = useState("");
 
     const normalizeClientName = (name: string) => {
         return name
@@ -25,39 +12,42 @@ export function ClientGenerator() {
             .replace(/\s+/g, "-");
     };
 
-    const handleGenerate = () => {
-        if (!clientName.trim()) return;
-        setGenerated(true);
-    };
+    const clientId = useMemo(() => {
+        const array = new Uint8Array(16);
+        crypto.getRandomValues(array);
+        return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
+    }, []);
+    const clientSecret = useMemo(() => {
+        const array = new Uint8Array(32);
+        crypto.getRandomValues(array);
+        return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
+    }, []);
+    const filename = useMemo(() => `clients/${normalizeClientName(clientName)}.json`, [clientName]);
 
-    const clientId = generated ? generateClientId() : "";
-    const clientSecret = generated ? generateClientSecret() : "";
-    const filename = generated ? `clients/${normalizeClientName(clientName)}.json` : "";
-    const uriArray = redirectUris
-        .split("\n")
-        .map((uri) => uri.trim())
-        .filter((uri) => uri.length > 0);
+    const clientJson = useMemo(
+        () =>
+            clientId && clientSecret && clientName && redirectUri
+                ? {
+                      client_id: clientId,
+                      client_secret: clientSecret,
+                      client_name: clientName,
+                      redirect_uris: [redirectUri],
+                      grant_types: ["authorization_code", "refresh_token"],
+                      response_types: ["code"],
+                      token_endpoint_auth_method: "client_secret_post",
+                      created_at: new Date().toISOString(),
+                  }
+                : null,
+        [clientId, clientSecret, clientName, redirectUri],
+    );
 
-    const clientJson = generated
-        ? JSON.stringify(
-              {
-                  client_id: clientId,
-                  client_secret: clientSecret,
-                  client_name: clientName,
-                  redirect_uris: uriArray,
-                  grant_types: ["authorization_code", "refresh_token"],
-                  response_types: ["code"],
-                  token_endpoint_auth_method: "client_secret_post",
-                  created_at: new Date().toISOString(),
-              },
-              null,
-              2
-          )
-        : "";
-
-    const wranglerCommand = generated
-        ? `echo '${clientJson.replace(/'/g, "'\\''")}' | wrangler r2 object put login/${filename}`
-        : "";
+    const wranglerCommand = useMemo(
+        () =>
+            clientJson
+                ? `echo '${JSON.stringify(clientJson).replace(/'/g, "'\\''")}' | npx wrangler r2 object put --pipe login/${filename}`
+                : "",
+        [clientJson],
+    );
 
     return (
         <div class="generator-container">
@@ -71,7 +61,6 @@ export function ClientGenerator() {
                         value={clientName}
                         onInput={(e) => {
                             setClientName((e.target as HTMLInputElement).value);
-                            setGenerated(false);
                         }}
                         placeholder="e.g., Sack of Rocks"
                     />
@@ -83,36 +72,24 @@ export function ClientGenerator() {
                 </div>
 
                 <div class="form-group">
-                    <label for="redirectUris">Redirect URIs (one per line):</label>
-                    <textarea
-                        id="redirectUris"
-                        value={redirectUris}
+                    <label for="redirectUri">Redirect URI</label>
+                    <input
+                        id="redirectUri"
+                        value={redirectUri}
                         onInput={(e) => {
-                            setRedirectUris((e.target as HTMLTextAreaElement).value);
-                            setGenerated(false);
+                            setRedirectUri((e.target as HTMLInputElement).value);
                         }}
-                        placeholder="https://example.com/callback&#10;https://example.com/auth/callback"
-                        rows={4}
+                        placeholder="https://example.com/callback"
                     />
                 </div>
-
-                <button onClick={handleGenerate} disabled={!clientName.trim()}>
-                    Generate Client Configuration
-                </button>
             </div>
 
-            {generated && (
+            {clientJson ? (
                 <div class="generated-output">
                     <div class="output-section">
                         <h3>Generated Client Configuration</h3>
                         <div class="json-output">
-                            <pre>{clientJson}</pre>
-                            <button
-                                class="copy-button"
-                                onClick={() => navigator.clipboard.writeText(clientJson)}
-                            >
-                                📋 Copy JSON
-                            </button>
+                            <pre>{JSON.stringify(clientJson, null, 2)}</pre>
                         </div>
                     </div>
 
@@ -145,6 +122,8 @@ export function ClientGenerator() {
                         </div>
                     </div>
                 </div>
+            ) : (
+                <div>Not enough information</div>
             )}
         </div>
     );

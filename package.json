@@ -22,9 +22,10 @@
     "devDependencies": {
         "@biomejs/biome": "^2.2.0",
         "@cloudflare/vite-plugin": "^1.11.6",
-        "@cloudflare/workers-types": "^4.20250822.0",
+        "@cloudflare/workers-types": "^4.20250831.0",
         "@playwright/test": "^1.55.0",
         "@preact/preset-vite": "^2.10.2",
+        "@preact/signals": "^2.3.1",
         "@tsconfig/node22": "^22.0.2",
         "@types/node": "^22.17.2",
         "concurrently": "^9.2.0",

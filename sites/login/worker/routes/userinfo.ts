@@ -1,0 +1,34 @@
+import { Hono } from "hono";
+import type { Env } from "../interfaces";
+
+const userinfo = new Hono<{ Bindings: Env }>();
+
+userinfo.get("/userinfo", async (c) => {
+    const authHeader = c.req.header("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return c.text("Unauthorized", 401);
+    }
+
+    const accessToken = authHeader.substring(7);
+    const tokenDataObj = await c.env.LOGIN_STORAGE.get(`access_token:${accessToken}`);
+
+    if (!tokenDataObj) {
+        return c.text("Unauthorized", 401);
+    }
+
+    const tokenData = JSON.parse(await tokenDataObj.text());
+
+    if (tokenData.expires < Date.now()) {
+        return c.text("Unauthorized", 401);
+    }
+
+    return c.json({
+        sub: tokenData.sub,
+        name: tokenData.name,
+        email: tokenData.email,
+        email_verified: tokenData.email_verified,
+        preferred_username: tokenData.username,
+    });
+});
+
+export default userinfo;

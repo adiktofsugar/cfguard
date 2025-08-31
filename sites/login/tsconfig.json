@@ -6,6 +6,7 @@
         "esModuleInterop": true,
         "strict": true,
         "jsx": "react-jsx",
-        "jsxImportSource": "preact"
+        "jsxImportSource": "preact",
+        "noEmit": true
     }
 }

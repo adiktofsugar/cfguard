@@ -1,6 +1,6 @@
-import { ClientGenerator } from "./ClientGenerator";
 import { useEffect, useState } from "preact/hooks";
 import { FaShield } from "react-icons/fa6";
+import { ClientGenerator } from "./ClientGenerator";
 
 export default function App() {
     const [isDarkMode, setIsDarkMode] = useState(true);
@@ -133,33 +133,8 @@ export default function App() {
 
                     <hr />
 
-                    <h2>Manual Configuration</h2>
-                    <p>
-                        If you prefer to create configurations manually, follow this specification:
-                    </p>
-
-                    <h3>JSON Structure</h3>
-                    <pre>
-                        <code>
-                            {JSON.stringify(
-                                {
-                                    client_id: "unique-client-id-here",
-                                    client_secret: "secure-secret-here",
-                                    client_name: "Your Application Name",
-                                    redirect_uris: [
-                                        "https://your-app.com/callback",
-                                        "https://your-app.com/auth/callback",
-                                    ],
-                                    grant_types: ["authorization_code", "refresh_token"],
-                                    response_types: ["code"],
-                                    token_endpoint_auth_method: "client_secret_post",
-                                    created_at: "2024-01-01T00:00:00Z",
-                                },
-                                null,
-                                2,
-                            )}
-                        </code>
-                    </pre>
+                    <h3>Create client json</h3>
+                    <p>Schema is...</p>
 
                     <h3>Upload to R2</h3>
                     <pre>

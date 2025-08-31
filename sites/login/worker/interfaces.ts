@@ -1,3 +1,9 @@
+export interface Env {
+    LOGIN_STORAGE: R2Bucket;
+    ISSUER: string;
+    ASSETS: Fetcher;
+}
+
 export interface UserData {
     sub: string;
     username: string;

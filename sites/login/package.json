@@ -6,14 +6,22 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "deploy": "wrangler deploy",
+        "deploy": "vite build && wrangler deploy",
         "test": "playwright test",
-        "test:ui": "playwright test --ui"
+        "test:ui": "playwright test --ui",
+        "preview": "vite build --mode preview && node preview/server.mjs",
+        "preview:dev": "concurrently \"vite build --mode preview --watch\" \"nodemon preview/server.mjs\""
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
         "@picocss/pico": "^2.1.1",
+        "@preact/signals": "^2.3.1",
+        "express": "^4.21.2",
+        "hono": "^4.9.5",
         "react-icons": "^5.5.0"
+    },
+    "devDependencies": {
+        "@cloudflare/workers-types": "^4.20250831.0"
     }
 }
