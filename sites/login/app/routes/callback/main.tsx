@@ -1,5 +1,6 @@
 import { render } from "preact";
 import CallbackApp from "./CallbackApp";
+import "@picocss/pico/css/pico.min.css";
 
 declare global {
     interface Window {

@@ -152,3 +152,4 @@ playwright/.cache/
 
 # other
 .claude/settings.local.json
+generated

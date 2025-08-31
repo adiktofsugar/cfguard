@@ -1,5 +1,6 @@
 import { render } from "preact";
 import AuthorizeApp from "./AuthorizeApp";
+import "@picocss/pico/css/pico.min.css";
 
 declare global {
     interface Window {

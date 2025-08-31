@@ -14,6 +14,5 @@ export default defineConfig({
                 dev: path.resolve(__dirname, "dev/index.html"),
             },
         },
-        outDir: "dist/static",
     },
 });

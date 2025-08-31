@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
-import AuthorizeApp from "../app/routes/authorize/AuthorizeApp";
-import CallbackApp from "../app/routes/callback/CallbackApp";
+import AuthorizeApp from "../authorize/AuthorizeApp";
+import CallbackApp from "../callback/CallbackApp";
 import RoutePreview from "./RoutePreview";
 
 export default function DevApp() {
@@ -82,11 +82,15 @@ export default function DevApp() {
                     <div class="grid">
                         <div>
                             <h3>Authorize Route Data</h3>
-                            <pre><code>{JSON.stringify(authorizeData, null, 2)}</code></pre>
+                            <pre>
+                                <code>{JSON.stringify(authorizeData, null, 2)}</code>
+                            </pre>
                         </div>
                         <div>
                             <h3>Callback Route Data</h3>
-                            <pre><code>{JSON.stringify(callbackData, null, 2)}</code></pre>
+                            <pre>
+                                <code>{JSON.stringify(callbackData, null, 2)}</code>
+                            </pre>
                         </div>
                     </div>
                 </article>

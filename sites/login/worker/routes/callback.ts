@@ -13,7 +13,7 @@ callback.get("/callback", async (c) => {
         state,
     };
 
-    return fetchAndInjectHTML(c, "/app/routes/callback/index.html", backendData);
+    return fetchAndInjectHTML(c, "callback", "Callback - CFGuard", backendData);
 });
 
 export default callback;

@@ -22,7 +22,7 @@ authorize.get("/authorize", async (c) => {
         responseType,
     };
 
-    return fetchAndInjectHTML(c, "/app/routes/authorize/index.html", backendData);
+    return fetchAndInjectHTML(c, "authorize", "Sign In - CFGuard", backendData);
 });
 
 authorize.post("/login", async (c) => {

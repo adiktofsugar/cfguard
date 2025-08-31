@@ -5,9 +5,13 @@ import token from "./routes/token";
 import discovery from "./routes/discovery";
 import userinfo from "./routes/userinfo";
 import callback from "./routes/callback";
+import dev from "./routes/dev";
+import main from "./routes/main";
 
 const app = new Hono<{ Bindings: Env }>();
 
+app.route("/", main);
+app.route("/", dev);
 app.route("/", authorize);
 app.route("/", token);
 app.route("/", discovery);
