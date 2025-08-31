@@ -3,7 +3,6 @@
 // Runtime types generated with workerd@1.20250816.0 2024-09-23 nodejs_compat_v2
 declare namespace Cloudflare {
 	interface Env {
-		ISSUER: "https://login.sackof.rocks";
 		LOGIN_STORAGE: R2Bucket;
 	}
 }

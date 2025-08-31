@@ -1,6 +1,5 @@
 export interface Env {
     LOGIN_STORAGE: R2Bucket;
-    ISSUER: string;
     ASSETS: Fetcher;
 }
 

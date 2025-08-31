@@ -5,12 +5,16 @@ import { getOrCreateKeyPair } from "../lib/keys";
 const discovery = new Hono<{ Bindings: Env }>();
 
 discovery.get("/.well-known/openid-configuration", async (c) => {
+    const protocol = c.req.header("X-Forwarded-Proto") || "https";
+    const host = c.req.header("Host");
+    const issuer = `${protocol}://${host}`;
+    
     return c.json({
-        issuer: c.env.ISSUER,
-        authorization_endpoint: `${c.env.ISSUER}/authorize`,
-        token_endpoint: `${c.env.ISSUER}/token`,
-        userinfo_endpoint: `${c.env.ISSUER}/userinfo`,
-        jwks_uri: `${c.env.ISSUER}/.well-known/jwks.json`,
+        issuer: issuer,
+        authorization_endpoint: `${issuer}/authorize`,
+        token_endpoint: `${issuer}/token`,
+        userinfo_endpoint: `${issuer}/userinfo`,
+        jwks_uri: `${issuer}/.well-known/jwks.json`,
         response_types_supported: ["code"],
         subject_types_supported: ["public"],
         id_token_signing_alg_values_supported: ["RS256"],

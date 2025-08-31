@@ -52,9 +52,13 @@ token.post("/token", async (c) => {
         JSON.stringify(accessTokenData),
     );
 
+    const protocol = c.req.header("X-Forwarded-Proto") || "https";
+    const host = c.req.header("Host");
+    const issuer = `${protocol}://${host}`;
+    
     const idToken = await signJWT(
         {
-            iss: c.env.ISSUER,
+            iss: issuer,
             sub: codeData.sub,
             aud: clientId,
             exp: now + 3600,
