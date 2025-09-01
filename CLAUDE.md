@@ -4,74 +4,70 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-cfguard is a Cloudflare Workers-based authentication system that serves static sites with OpenID Connect (OIDC) authentication. It implements a complete OIDC provider that integrates with Cloudflare Access.
+cfguard is a Cloudflare Workers-based OpenID Connect (OIDC) provider that serves as a complete authentication system. It implements standard OIDC endpoints and integrates with Cloudflare Access, using R2 for storage and Hono for routing.
 
 ## Common Development Commands
 
-### Development
 ```bash
-npm run dev:login      # Start login site dev server
-npm run dev:hello      # Start hello-world site dev server
-```
-
-### Build & Deploy
-```bash
-npm run build          # Build all sites with Turbo
-npm run deploy         # Deploy all sites to Cloudflare
-```
-
-### Testing & Quality
-```bash
-npm run test           # Run Playwright E2E tests
+npm run dev            # Start development server with watch mode
+npm run build          # Production build
+npm run deploy         # Build and deploy to Cloudflare
+npm run test           # Run Playwright E2E tests  
 npm run lint           # Run Biome linter and TypeScript checks
 npm run fix            # Auto-fix linting issues
+npm run types          # Generate Cloudflare Workers types
 npm test -- --ui      # Run tests with UI
-npm test -- tests/login.spec.mts  # Run specific test file
-```
-
-### Workspace-specific commands (run from root)
-```bash
-npm run build -w sites/login       # Build specific workspace
-npm run dev -w sites/hello-world   # Run dev server for specific site
+npm test -- __tests__/oidc-flow.spec.ts  # Run specific test file
 ```
 
 ## Architecture
 
-### Monorepo Structure
-- **sites/**: Individual Cloudflare Workers sites (npm workspaces)
-  - **login/**: OIDC provider implementation
-  - **hello-world/**: Example site with Preact + MobX
+### Project Structure
+- **worker/**: Hono-based backend API
+  - **routes/**: OIDC endpoint handlers (authorize, token, userinfo, discovery, callback)
+  - **lib/**: Utilities (crypto, jwt, keys, html-helper)
+  - **interfaces.ts**: TypeScript type definitions
+- **app/**: Frontend Preact applications with multiple entry points
+  - **routes/**: Separate apps (main, authorize, callback, dev)
+  - **components/**: Shared Preact components
+- **scripts/build.mts**: Custom esbuild script with watch mode
+- **__tests__/**: Playwright E2E tests for OIDC flows
 
-### Site Architecture Pattern
-Each site follows this structure:
-- **worker/**: Hono-based backend API routes
-  - **routes/**: Individual route handlers
-  - **index.mts**: Main worker entry point
-- **app/**: Frontend Preact applications
-  - **routes/**: Frontend route components
-  - Multiple HTML entry points (index.html, authorize.html, etc.)
-- **public/**: Static assets served directly
-- **scripts/build.mts**: Custom build script (for login site)
-
-### OIDC Implementation (sites/login)
-Key endpoints:
+### OIDC Implementation
+Standard endpoints:
 - `/.well-known/openid-configuration`: Discovery endpoint
-- `/.well-known/jwks.json`: Public key endpoint
-- `/authorize`: Authorization endpoint
+- `/.well-known/jwks.json`: Public key endpoint  
+- `/authorize`: Authorization endpoint with login form
 - `/token`: Token exchange endpoint
 - `/userinfo`: User information endpoint
 
-### Frontend Build System
-- Vite with multiple HTML entry points
-- Preact for lightweight React alternative
-- MobX for state management (hello-world)
-- Preact Signals for reactive state
+### Storage Strategy
+Uses Cloudflare R2 bucket (`LOGIN_STORAGE` binding):
+- User data: `user:username` keys
+- Authorization codes: `code:uuid` keys (10-minute expiry)
+- Client configurations: `clients/client-id.json` files
+- RSA key pairs for JWT signing
 
-### TypeScript Configuration
-- Project references for incremental builds
-- Strict type checking enabled
-- Interfaces in separate `interfaces.ts` files
+### Build System
+- Custom esbuild script with multiple entry points (authorize, callback, dev, main)
+- Frontend data injection pattern: `<!--BACKEND_DATA-->` placeholder
+- Code splitting with hash-based filenames
+- Vite for additional frontend tooling
+
+### Testing Approach
+Comprehensive E2E testing of OIDC flows:
+- Discovery and JWKS endpoint validation
+- Full authorization flow (login → code → token)
+- JWT structure and signature validation
+- Protected resource access testing
+- Error handling for invalid credentials/codes
 
 ## Important Conventions
 
-- Use minimist to parse argv
+- Use minimist to parse argv in scripts
+- All interfaces in separate `interfaces.ts` files
+- 4-space indentation (configured in Biome)
+- No TypeScript `any` types or `as` assertions
+- Use `path.method()` instead of destructured imports
+- Frontend-backend data injection via window.__BACKEND_DATA__
+- Default admin user: `admin/password` for initial setup
