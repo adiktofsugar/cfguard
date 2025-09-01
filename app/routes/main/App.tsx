@@ -86,6 +86,7 @@ export default function App({ backendData }: AppProps) {
                                 </td>
                                 <td>
                                     <code>
+                                        GET
                                         https://login.sackof.rocks/.well-known/openid-configuration
                                     </code>
                                 </td>
@@ -96,7 +97,7 @@ export default function App({ backendData }: AppProps) {
                                     <strong>Authorization</strong>
                                 </td>
                                 <td>
-                                    <code>https://login.sackof.rocks/authorize</code>
+                                    <code>GET https://login.sackof.rocks/authorize</code>
                                 </td>
                                 <td>User authentication</td>
                             </tr>
@@ -105,7 +106,7 @@ export default function App({ backendData }: AppProps) {
                                     <strong>Token</strong>
                                 </td>
                                 <td>
-                                    <code>https://login.sackof.rocks/token</code>
+                                    <code>POST https://login.sackof.rocks/token</code>
                                 </td>
                                 <td>Exchange authorization codes for tokens</td>
                             </tr>
@@ -114,7 +115,9 @@ export default function App({ backendData }: AppProps) {
                                     <strong>JWKS</strong>
                                 </td>
                                 <td>
-                                    <code>https://login.sackof.rocks/jwks</code>
+                                    <code>
+                                        GET https://login.sackof.rocks/.well-known/jwks.json
+                                    </code>
                                 </td>
                                 <td>Public keys for JWT verification</td>
                             </tr>

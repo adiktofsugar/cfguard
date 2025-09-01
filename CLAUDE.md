@@ -41,6 +41,12 @@ Standard endpoints:
 - `/token`: Token exchange endpoint
 - `/userinfo`: User information endpoint
 
+Client authentication:
+- Only supports confidential clients (client_secret required)
+- Authorization codes store the client_id for validation
+- Token endpoint validates client_id (if provided) matches the one from authorization code
+- Client credentials stored in R2 at `clients/{client_id}.json`
+
 ### Storage Strategy
 Uses Cloudflare R2 bucket (`LOGIN_STORAGE` binding):
 - User data: `user:username` keys

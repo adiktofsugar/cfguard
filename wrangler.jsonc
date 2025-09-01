@@ -15,6 +15,7 @@
     },
     "vars": {
         // NOTE: we need this to be able to print the right message on the frontend
-        "R2_BUCKET_NAME": "login"
+        "R2_BUCKET_NAME": "login",
+        "LOG_LEVEL": "DEBUG"
     }
 }
