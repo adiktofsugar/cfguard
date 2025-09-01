@@ -10,11 +10,22 @@ token.post("/token", async (c) => {
     const grantType = formData["grant_type"];
     const code = formData["code"] as string;
     const clientId = formData["client_id"] as string;
-    const _clientSecret = formData["client_secret"] as string;
+    const clientSecret = formData["client_secret"] as string;
     const redirectUri = formData["redirect_uri"] as string;
 
     if (grantType !== "authorization_code") {
         return c.json({ error: "unsupported_grant_type" }, 400);
+    }
+
+    // Validate client credentials
+    const clientData = await c.env.LOGIN_STORAGE.get(`clients/${clientId}.json`);
+    if (!clientData) {
+        return c.json({ error: "invalid_client" }, 401);
+    }
+    
+    const client = JSON.parse(await clientData.text());
+    if (client.client_secret !== clientSecret) {
+        return c.json({ error: "invalid_client" }, 401);
     }
 
     const codeDataObj = await c.env.LOGIN_STORAGE.get(`code:${code}`);

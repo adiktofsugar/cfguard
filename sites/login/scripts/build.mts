@@ -76,39 +76,13 @@ async function build() {
         console.log("Initial build complete");
 
         // Start esbuild in watch mode
-        const ctx = await esbuild.context({
-            ...buildOptions,
-            plugins: [
-                ...(buildOptions.plugins || []),
-                {
-                    name: "watch-error-handler",
-                    setup(build) {
-                        build.onEnd((result) => {
-                            if (result.errors.length > 0) {
-                                console.error("Build failed with errors");
-                                // Kill wrangler if build fails
-                                if (wrangler) {
-                                    wrangler.kill();
-                                }
-                            }
-                        });
-                    },
-                },
-            ],
-        });
-
-        ctx.watch().catch((err) => {
-            console.error("ESBuild watch failed:", err);
-            if (wrangler) {
-                wrangler.kill();
-            }
-            process.exit(1);
-        });
+        const ctx = await esbuild.context(buildOptions);
+        ctx.watch();
 
         console.log("ESBuild watching for changes...");
 
-        // Start wrangler dev and pass through stdio
-        wrangler = spawn("wrangler", ["dev", "--config", "wrangler.jsonc"], {
+        // Start wrangler dev with local environment
+        wrangler = spawn("wrangler", ["dev"], {
             stdio: "inherit",
             shell: true,
         });
@@ -121,20 +95,30 @@ async function build() {
         });
 
         // Handle cleanup on process termination
-        process.on("SIGINT", async () => {
-            if (wrangler) {
+        let isCleaningUp = false;
+        const cleanup = async () => {
+            if (isCleaningUp) return;
+            isCleaningUp = true;
+
+            console.log("\nShutting down...");
+
+            // First dispose esbuild context to stop watching
+            await ctx.dispose();
+
+            // Then kill wrangler
+            if (wrangler && !wrangler.killed) {
                 wrangler.kill();
             }
-            await ctx.dispose();
+
             process.exit(0);
+        };
+
+        process.on("SIGINT", () => {
+            cleanup().catch(console.error);
         });
 
-        process.on("SIGTERM", async () => {
-            if (wrangler) {
-                wrangler.kill();
-            }
-            await ctx.dispose();
-            process.exit(0);
+        process.on("SIGTERM", () => {
+            cleanup().catch(console.error);
         });
     } else {
         await esbuild.build(buildOptions);

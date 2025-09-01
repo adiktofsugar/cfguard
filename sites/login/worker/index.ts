@@ -7,6 +7,7 @@ import userinfo from "./routes/userinfo";
 import callback from "./routes/callback";
 import dev from "./routes/dev";
 import main from "./routes/main";
+import clientCheck from "./routes/client-check";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -17,6 +18,7 @@ app.route("/", token);
 app.route("/", discovery);
 app.route("/", userinfo);
 app.route("/", callback);
+app.route("/", clientCheck);
 
 app.notFound((c) => c.text("Not Found", 404));
 

@@ -8,7 +8,7 @@
         "dev": "tsx scripts/build.mts --dev",
         "deploy": "tsx scripts/build.mts && wrangler deploy --config wrangler.jsonc",
         "test": "playwright test",
-        "test:ui": "playwright test --ui"
+        "types": "wrangler types"
     },
     "author": "",
     "license": "ISC",

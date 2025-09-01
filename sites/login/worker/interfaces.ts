@@ -1,6 +1,7 @@
 export interface Env {
     LOGIN_STORAGE: R2Bucket;
     ASSETS: Fetcher;
+    R2_BUCKET_NAME: string;
 }
 
 export interface UserData {

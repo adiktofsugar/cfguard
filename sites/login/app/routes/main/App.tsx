@@ -3,7 +3,17 @@ import { faShield } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "../../components/FontAwesomeIcon";
 import { ClientGenerator } from "./ClientGenerator";
 
-export default function App() {
+interface BackendData {
+    message: string;
+    isLocalR2: boolean;
+    r2BucketName: string;
+}
+
+interface AppProps {
+    backendData: BackendData;
+}
+
+export default function App({ backendData }: AppProps) {
     const [isDarkMode, setIsDarkMode] = useState(true);
 
     useEffect(() => {
@@ -47,27 +57,16 @@ export default function App() {
                 <div class="container">
                     <h1 class="pico-color-pink-350">CFGuard OIDC Provider</h1>
                     <p>
-                        OpenID Connect authentication provider for Cloudflare Workers applications
-                    </p>
-                    <h2>Quick Start</h2>
-                    <p>
                         <strong>CFGuard</strong> manages authentication for your applications
                         through OpenID Connect. Register clients by creating JSON configuration
                         files in the R2 bucket.
                     </p>
+                    <hr />
 
-                    <h3>Three Easy Steps</h3>
-                    <ol>
-                        <li>
-                            <strong>Generate</strong> a client configuration using the tool below
-                        </li>
-                        <li>
-                            <strong>Upload</strong> the configuration to R2 using wrangler
-                        </li>
-                        <li>
-                            <strong>Configure</strong> your application with the client credentials
-                        </li>
-                    </ol>
+                    <ClientGenerator
+                        r2BucketName={backendData.r2BucketName}
+                        isLocalR2={backendData.isLocalR2}
+                    />
 
                     <hr />
 
@@ -121,40 +120,6 @@ export default function App() {
                             </tr>
                         </tbody>
                     </table>
-
-                    <hr />
-
-                    <h2>Client Configuration Generator</h2>
-                    <p>
-                        Use this interactive tool to generate a complete client configuration with
-                        secure credentials:
-                    </p>
-
-                    <ClientGenerator />
-
-                    <hr />
-
-                    <h3>Create client json</h3>
-                    <p>Schema is...</p>
-
-                    <h3>Upload to R2</h3>
-                    <pre>
-                        <code>{`wrangler r2 object put login/clients/your-client-name.json --file ./client-config.json`}</code>
-                    </pre>
-
-                    <h3>File Naming Rules</h3>
-                    <ul>
-                        <li>
-                            <strong>Location:</strong> Store in <code>clients/</code> directory
-                        </li>
-                        <li>
-                            <strong>Format:</strong> Use lowercase with hyphens (e.g.,{" "}
-                            <code>my-app.json</code>)
-                        </li>
-                        <li>
-                            <strong>Content:</strong> Valid JSON with all required fields
-                        </li>
-                    </ul>
                 </div>
             </main>
         </>
