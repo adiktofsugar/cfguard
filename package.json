@@ -1,24 +1,28 @@
 {
-    "name": "cloudflare-sites",
-    "private": true,
+    "name": "cfguard",
     "version": "1.0.0",
-    "workspaces": [
-        "sites/*"
-    ],
     "scripts": {
-        "dev:login": "npm run -w @sites/login dev",
-        "dev:hello": "npm run -w @sites/hello-world dev",
-        "build": "turbo run build",
+        "build": "tsx scripts/build.mts",
+        "dev": "tsx scripts/build.mts --dev",
+        "deploy": "tsx scripts/build.mts && wrangler deploy --config wrangler.jsonc",
+        "test": "playwright test",
+        "types": "wrangler types",
         "lint": "concurrently -gr npm:lint:*",
         "lint:biome": "biome check",
         "lint:tsc": "tsc --build",
-        "fix": "biome check --fix --unsafe .",
-        "deploy": "turbo run deploy",
-        "test": "turbo run test"
+        "fix": "biome check --fix --unsafe ."
     },
     "author": "",
     "license": "ISC",
     "description": "",
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^7.0.0",
+        "@fortawesome/free-solid-svg-icons": "^7.0.0",
+        "@picocss/pico": "^2.1.1",
+        "@preact/signals": "^2.3.1",
+        "express": "^4.21.2",
+        "hono": "^4.9.5"
+    },
     "devDependencies": {
         "@biomejs/biome": "^2.2.0",
         "@cloudflare/vite-plugin": "^1.11.6",
@@ -34,7 +38,6 @@
         "playwright": "^1.55.0",
         "preact": "^10.19.3",
         "tsx": "^4.20.4",
-        "turbo": "^2.5.6",
         "typescript": "^5.9.2",
         "vite": "^7.1.3",
         "wrangler": "^4.31.0"

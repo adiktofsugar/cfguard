@@ -1,8 +1,12 @@
 {
-    "files": [],
-    "references": [
-        { "path": "./sites/hello-world" },
-        { "path": "./sites/hello-world/worker" },
-        { "path": "./sites/login/worker" }
-    ]
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "esModuleInterop": true,
+        "strict": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "preact",
+        "noEmit": true
+    }
 }
