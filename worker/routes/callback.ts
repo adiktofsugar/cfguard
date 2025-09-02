@@ -7,7 +7,7 @@ const callback = new Hono<{ Bindings: Env }>();
 callback.get("/callback", async (c) => {
     const code = c.req.query("code");
     const state = c.req.query("state");
-    
+
     const backendData = {
         code,
         state,

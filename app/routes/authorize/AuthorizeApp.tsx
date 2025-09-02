@@ -25,13 +25,13 @@ export default function AuthorizeApp({ data }: AuthorizeAppProps) {
                     <input type="hidden" name="redirect_uri" value={data.redirectUri} />
                     {data.state && <input type="hidden" name="state" value={data.state} />}
 
-                    <label htmlFor="username">
-                        Username
+                    <label htmlFor="email">
+                        Email
                         <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            placeholder="Enter your username"
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
                             required
                         />
                     </label>

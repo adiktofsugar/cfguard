@@ -1,7 +1,11 @@
 import type { JWTPayload } from "../interfaces";
 import { base64UrlEncode } from "./crypto";
 
-export async function signJWT(payload: JWTPayload, privateKey: CryptoKey, kid: string): Promise<string> {
+export async function signJWT(
+    payload: JWTPayload,
+    privateKey: CryptoKey,
+    kid: string,
+): Promise<string> {
     const header = {
         alg: "RS256",
         typ: "JWT",

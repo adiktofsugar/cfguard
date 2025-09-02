@@ -24,10 +24,7 @@ userinfo.get("/userinfo", async (c) => {
 
     return c.json({
         sub: tokenData.sub,
-        name: tokenData.name,
         email: tokenData.email,
-        email_verified: tokenData.email_verified,
-        preferred_username: tokenData.username,
     });
 });
 

@@ -1,7 +1,7 @@
-import type { Context } from "hono";
-import type { Env } from "../interfaces";
 import type { Metafile } from "esbuild";
+import type { Context } from "hono";
 import metaActual from "../generated/metafile.json";
+import type { Env } from "../interfaces";
 
 // the json is too strongly typed to be useful
 const meta = metaActual as unknown as Metafile;

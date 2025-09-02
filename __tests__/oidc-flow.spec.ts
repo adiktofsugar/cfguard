@@ -59,7 +59,7 @@ test.describe("OIDC Provider Flow", () => {
 
         await expect(page.locator("h1")).toContainText("Sign In");
         await expect(page.locator(".client-info")).toContainText(clientId);
-        await expect(page.locator('input[name="username"]')).toBeVisible();
+        await expect(page.locator('input[name="email"]')).toBeVisible();
         await expect(page.locator('input[name="password"]')).toBeVisible();
         await expect(page.locator('button[type="submit"]')).toBeVisible();
     });
@@ -79,7 +79,7 @@ test.describe("OIDC Provider Flow", () => {
         );
 
         // 2. Fill and submit login form
-        await page.fill('input[name="username"]', "admin");
+        await page.fill('input[name="email"]', "admin@example.com");
         await page.fill('input[name="password"]', "password");
 
         // Submit form and wait for redirect
@@ -126,7 +126,6 @@ test.describe("OIDC Provider Flow", () => {
         expect(idToken.payload.iss).toBe("https://login.sackof.rocks");
         expect(idToken.payload.aud).toBe(clientId);
         expect(idToken.payload.sub).toBeTruthy();
-        expect(idToken.payload.name).toBe("Admin User");
         expect(idToken.payload.email).toBe("admin@example.com");
 
         // 5. Test userinfo endpoint
@@ -140,10 +139,7 @@ test.describe("OIDC Provider Flow", () => {
         const userinfo = await userinfoResponse.json();
 
         expect(userinfo.sub).toBe(idToken.payload.sub);
-        expect(userinfo.name).toBe("Admin User");
         expect(userinfo.email).toBe("admin@example.com");
-        expect(userinfo.email_verified).toBe(true);
-        expect(userinfo.preferred_username).toBe("admin");
     });
 
     test("should reject invalid credentials", async ({ page }) => {
@@ -151,7 +147,7 @@ test.describe("OIDC Provider Flow", () => {
             `/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&state=${state}`,
         );
 
-        await page.fill('input[name="username"]', "invalid");
+        await page.fill('input[name="email"]', "invalid@example.com");
         await page.fill('input[name="password"]', "wrong");
         await page.click('button[type="submit"]');
 
@@ -188,7 +184,7 @@ test.describe("OIDC Provider Flow", () => {
         const response = await request.post("/token", {
             form: {
                 grant_type: "password",
-                username: "admin",
+                email: "admin@example.com",
                 password: "password",
             },
         });

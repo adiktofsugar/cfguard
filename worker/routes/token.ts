@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import Logger from "js-logger";
-import type { Env, ClientInfo, ValidationResult } from "../interfaces";
-import { getOrCreateKeyPair } from "../lib/keys";
+import type { ClientInfo, Env, ValidationResult } from "../interfaces";
 import { signJWT } from "../lib/jwt";
+import { getOrCreateKeyPair } from "../lib/keys";
 
 const token = new Hono<{ Bindings: Env }>();
 
@@ -57,11 +57,11 @@ token.post("/token", async (c) => {
     const formData = await c.req.parseBody();
 
     Logger.debug("Token endpoint called", formData);
-    const grantType = formData["grant_type"];
-    const code = formData["code"] as string;
-    const clientId = formData["client_id"] as string | undefined;
-    const clientSecret = formData["client_secret"] as string | undefined;
-    const redirectUri = formData["redirect_uri"] as string;
+    const grantType = formData.grant_type;
+    const code = formData.code as string;
+    const clientId = formData.client_id as string | undefined;
+    const clientSecret = formData.client_secret as string | undefined;
+    const redirectUri = formData.redirect_uri as string;
 
     if (grantType !== "authorization_code") {
         Logger.warn("Invalid grant type", { grantType });
@@ -121,10 +121,7 @@ token.post("/token", async (c) => {
     const accessToken = crypto.randomUUID();
     const accessTokenData = {
         sub: codeData.sub,
-        username: codeData.username,
-        name: codeData.name,
         email: codeData.email,
-        email_verified: codeData.email_verified,
         expires: Date.now() + 3600000,
     };
 
@@ -141,10 +138,7 @@ token.post("/token", async (c) => {
             aud: effectiveClientId,
             exp: now + 3600,
             iat: now,
-            name: codeData.name,
             email: codeData.email,
-            email_verified: codeData.email_verified,
-            preferred_username: codeData.username,
         },
         privateKey,
         publicJwk.kid || "",

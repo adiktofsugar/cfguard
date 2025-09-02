@@ -16,7 +16,7 @@ if (!appElement) {
 let backendData;
 try {
     backendData = JSON.parse(window.__BACKEND_DATA__);
-} catch (err) {
+} catch (_err) {
     throw new Error("Failed to parse backend data");
 }
 

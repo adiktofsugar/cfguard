@@ -1,10 +1,10 @@
 #!/usr/bin/env tsx
+import { type ChildProcess, spawn } from "node:child_process";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import * as esbuild from "esbuild";
-import fs from "fs/promises";
 import minimist from "minimist";
-import { spawn, type ChildProcess } from "child_process";
-import path from "path";
-import { fileURLToPath } from "url";
 
 const usage = `
 Usage: tsx scripts/build.mts [options]

@@ -9,8 +9,8 @@ dev.get("/dev", async (c) => {
         routes: [
             { path: "/authorize", name: "Authorize" },
             { path: "/callback", name: "Callback" },
-            { path: "/", name: "Main" }
-        ]
+            { path: "/", name: "Main" },
+        ],
     };
 
     return fetchAndInjectHTML(c, "dev", "Dev Tools - CFGuard", backendData);

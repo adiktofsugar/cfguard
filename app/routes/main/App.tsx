@@ -1,7 +1,8 @@
-import { useEffect, useState } from "preact/hooks";
 import { faShield } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "preact/hooks";
 import { FontAwesomeIcon } from "../../components/FontAwesomeIcon";
 import { ClientGenerator } from "./ClientGenerator";
+import { UserGenerator } from "./UserGenerator";
 
 interface BackendData {
     message: string;
@@ -61,14 +62,18 @@ export default function App({ backendData }: AppProps) {
                         through OpenID Connect. Register clients by creating JSON configuration
                         files in the R2 bucket.
                     </p>
-                    <hr />
 
-                    <ClientGenerator
-                        r2BucketName={backendData.r2BucketName}
-                        isLocalR2={backendData.isLocalR2}
-                    />
+                    <div class="grid">
+                        <UserGenerator
+                            r2BucketName={backendData.r2BucketName}
+                            isLocalR2={backendData.isLocalR2}
+                        />
 
-                    <hr />
+                        <ClientGenerator
+                            r2BucketName={backendData.r2BucketName}
+                            isLocalR2={backendData.isLocalR2}
+                        />
+                    </div>
 
                     <h2>Provider Endpoints</h2>
                     <table>

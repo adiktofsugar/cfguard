@@ -8,7 +8,7 @@ discovery.get("/.well-known/openid-configuration", async (c) => {
     const protocol = c.req.header("X-Forwarded-Proto") || "https";
     const host = c.req.header("Host");
     const issuer = `${protocol}://${host}`;
-    
+
     return c.json({
         issuer: issuer,
         authorization_endpoint: `${issuer}/authorize`,
@@ -20,13 +20,7 @@ discovery.get("/.well-known/openid-configuration", async (c) => {
         id_token_signing_alg_values_supported: ["RS256"],
         scopes_supported: ["openid", "profile", "email"],
         token_endpoint_auth_methods_supported: ["client_secret_post"],
-        claims_supported: [
-            "sub",
-            "name",
-            "email",
-            "email_verified",
-            "preferred_username",
-        ],
+        claims_supported: ["sub", "name", "email", "email_verified", "preferred_username"],
     });
 });
 
