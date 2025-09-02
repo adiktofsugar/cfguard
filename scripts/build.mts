@@ -28,10 +28,11 @@ const isDev = argv.dev;
 
 async function build() {
     const entryPoints = {
-        authorize: "./app/routes/authorize/main.tsx",
-        callback: "./app/routes/callback/main.tsx",
-        dev: "./app/routes/dev/main.tsx",
-        main: "./app/routes/main/main.tsx",
+        authorize: "./app/pages/authorize/main.tsx",
+        "authorize-external": "./app/pages/authorize-external/main.tsx",
+        callback: "./app/pages/callback/main.tsx",
+        dev: "./app/pages/dev/main.tsx",
+        main: "./app/pages/main/main.tsx",
     };
 
     const metafilePath = fileURLToPath(

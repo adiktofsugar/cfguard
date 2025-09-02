@@ -1,4 +1,4 @@
-import { signal, type Signal } from "@preact/signals";
+import { type Signal, signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import type { Client } from "./interfaces";
 

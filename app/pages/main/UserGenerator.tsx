@@ -1,7 +1,7 @@
 import { signal } from "@preact/signals";
+import type { User } from "./interfaces";
 import UserForm from "./UserForm";
 import { UserTable } from "./UserTable";
-import type { User } from "./interfaces";
 
 const users = signal<User[] | null>(null);
 

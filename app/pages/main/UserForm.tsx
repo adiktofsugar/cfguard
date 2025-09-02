@@ -1,4 +1,4 @@
-import { computed, signal, type Signal } from "@preact/signals";
+import { computed, type Signal, signal } from "@preact/signals";
 import { useMemo } from "preact/hooks";
 import type { User } from "./interfaces";
 

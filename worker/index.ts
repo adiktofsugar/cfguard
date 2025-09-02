@@ -44,3 +44,4 @@ app.route("/", userCheck);
 app.notFound((c) => c.text("Not Found", 404));
 
 export default app;
+export { AuthorizationSession } from "./durable-objects";

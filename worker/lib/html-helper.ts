@@ -45,7 +45,7 @@ export async function fetchAndInjectHTML(
     title: string,
     backendData: unknown,
 ): Promise<Response> {
-    const { js, css } = getAssetsForEntryPoint(`app/routes/${entryName}/main.tsx`);
+    const { js, css } = getAssetsForEntryPoint(`app/pages/${entryName}/main.tsx`);
 
     // Generate HTML
     const html = `<!DOCTYPE html>

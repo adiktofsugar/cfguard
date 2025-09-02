@@ -3,6 +3,7 @@ export interface Env {
     ASSETS: Fetcher;
     R2_BUCKET_NAME: string;
     LOG_LEVEL?: string;
+    AUTHORIZATION_SESSIONS: DurableObjectNamespace;
 }
 
 export interface UserData {

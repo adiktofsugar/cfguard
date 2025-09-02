@@ -1,6 +1,8 @@
 import { render } from "preact";
-import AuthorizeApp from "./AuthorizeApp";
+import App from "./App";
 import "@picocss/pico/css/pico.min.css";
+import "@picocss/pico/css/pico.colors.min.css";
+import "./index.css";
 
 declare global {
     interface Window {
@@ -10,7 +12,7 @@ declare global {
 
 const appElement = document.getElementById("app");
 if (!appElement) {
-    throw new Error("App element not found");
+    throw new Error("Could not find app element");
 }
 
 let backendData;
@@ -20,4 +22,4 @@ try {
     throw new Error("Failed to parse backend data");
 }
 
-render(<AuthorizeApp data={backendData} />, appElement);
+render(<App backendData={backendData} />, appElement);
