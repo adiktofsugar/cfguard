@@ -3,12 +3,7 @@ import { useEffect, useState } from "preact/hooks";
 import { FontAwesomeIcon } from "../../components/FontAwesomeIcon";
 import { ClientGenerator } from "./ClientGenerator";
 import { UserGenerator } from "./UserGenerator";
-
-interface BackendData {
-    message: string;
-    isLocalR2: boolean;
-    r2BucketName: string;
-}
+import type { BackendData } from "./interfaces";
 
 interface AppProps {
     backendData: BackendData;

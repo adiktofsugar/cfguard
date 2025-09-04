@@ -1,5 +1,3 @@
-import type { Env } from "../interfaces";
-
 export interface JWKWithKid extends JsonWebKey {
     kid?: string;
 }

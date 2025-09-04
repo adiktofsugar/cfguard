@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import type { ClientInfo, Env } from "../interfaces";
+import type { ClientInfo } from "../interfaces";
 
 const clientCheck = new Hono<{ Bindings: Env }>();
 

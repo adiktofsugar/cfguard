@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import type { Env } from "../interfaces";
 import { getOrCreateKeyPair } from "../lib/keys";
 
 const discovery = new Hono<{ Bindings: Env }>();

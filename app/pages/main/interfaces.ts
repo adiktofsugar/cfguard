@@ -8,3 +8,9 @@ export interface Client {
     created_at: string;
     client_secret: string;
 }
+
+export interface BackendData {
+    message: string;
+    isLocalR2: boolean;
+    r2BucketName: string;
+}

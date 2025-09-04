@@ -1,11 +1,3 @@
-export interface Env {
-    LOGIN_STORAGE: R2Bucket;
-    ASSETS: Fetcher;
-    R2_BUCKET_NAME: string;
-    LOG_LEVEL?: string;
-    AUTHORIZATION_SESSIONS: DurableObjectNamespace;
-}
-
 export interface UserData {
     sub: string;
     passwordHash: string;

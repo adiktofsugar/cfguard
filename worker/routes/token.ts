@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import Logger from "js-logger";
-import type { ClientInfo, Env, ValidationResult } from "../interfaces";
+import type { ClientInfo, ValidationResult } from "../interfaces";
 import { signJWT } from "../lib/jwt";
 import { getOrCreateKeyPair } from "../lib/keys";
 

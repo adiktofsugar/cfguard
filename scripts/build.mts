@@ -27,13 +27,15 @@ if (argv.help) {
 const isDev = argv.dev;
 
 async function build() {
-    const entryPoints = {
-        authorize: "./app/pages/authorize/main.tsx",
-        "authorize-external": "./app/pages/authorize-external/main.tsx",
-        callback: "./app/pages/callback/main.tsx",
-        dev: "./app/pages/dev/main.tsx",
-        main: "./app/pages/main/main.tsx",
-    };
+    const pagesDirpath = fileURLToPath(new URL("../app/pages", import.meta.url));
+    const pageFilenames = await fs.readdir(pagesDirpath);
+    const entryPoints = pageFilenames.reduce(
+        (acc, name) => {
+            acc[name] = path.join(pagesDirpath, name, "main.tsx");
+            return acc;
+        },
+        {} as Record<string, string>,
+    );
 
     const metafilePath = fileURLToPath(
         new URL("../worker/generated/metafile.json", import.meta.url),

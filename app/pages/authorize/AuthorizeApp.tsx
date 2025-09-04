@@ -17,6 +17,7 @@ interface AuthorizeAppProps {
 }
 
 const externalDeviceConnected = signal(false);
+const wsConnected = signal(false);
 
 export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
     const wsRef = useRef<WebSocket | null>(null);
@@ -27,7 +28,7 @@ export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
 
         return () => {
             if (wsRef.current) {
-                wsRef.current.close();
+                wsRef.current.close(1000);
             }
             if (reconnectTimeoutRef.current) {
                 clearTimeout(reconnectTimeoutRef.current);
@@ -44,8 +45,10 @@ export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
 
         ws.onopen = () => {
             console.log("WebSocket connected");
+            wsConnected.value = true;
             const pingInterval = setInterval(() => {
                 if (ws.readyState === WebSocket.OPEN) {
+                    console.debug("[ws] Ping");
                     ws.send(JSON.stringify({ type: "ping" }));
                 } else {
                     clearInterval(pingInterval);
@@ -85,14 +88,19 @@ export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
 
         ws.onerror = (error) => {
             console.error("WebSocket error:", error);
+            wsConnected.value = false;
         };
 
-        ws.onclose = () => {
-            console.log("WebSocket closed, reconnecting...");
+        ws.onclose = (ev) => {
+            console.log(`WebSocket closed with code ${ev.code}`);
+            wsConnected.value = false;
             wsRef.current = null;
-            reconnectTimeoutRef.current = window.setTimeout(() => {
-                connectWebSocket();
-            }, 1000);
+            if (ev.code !== 1000) {
+                console.log("reconnecting...");
+                reconnectTimeoutRef.current = window.setTimeout(() => {
+                    connectWebSocket();
+                }, 1000);
+            }
         };
     };
 
@@ -100,6 +108,11 @@ export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
         <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-6">
             <div class="mx-auto w-full max-w-md">
                 <h2 class="mt-6 text-center text-3xl font-bold">Sign in to continue</h2>
+                {!wsConnected.value && (
+                    <div class="mt-4 bg-yellow-50 border border-yellow-200 rounded-md p-4">
+                        <p class="text-center">Connecting...</p>
+                    </div>
+                )}
                 {externalDeviceConnected.value && (
                     <div class="mt-4 bg-green-50 border border-green-200 rounded-md p-4">
                         <p class="text-center">External device connected - waiting for login...</p>

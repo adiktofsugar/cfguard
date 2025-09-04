@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import type { Env } from "../interfaces";
 import { fetchAndInjectHTML } from "../lib/html-helper";
 
 const callback = new Hono<{ Bindings: Env }>();

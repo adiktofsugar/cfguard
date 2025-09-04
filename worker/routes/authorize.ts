@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import Logger from "js-logger";
-import type { Env, UserData } from "../interfaces";
+import type { UserData } from "../interfaces";
 import { verifyPassword } from "../lib/crypto";
 import { fetchAndInjectHTML } from "../lib/html-helper";
 
@@ -108,8 +108,7 @@ authorize.get("/authorize/:id/external/ws", async (c) => {
     const id = c.env.AUTHORIZATION_SESSIONS.idFromName(sessionId);
     const stub = c.env.AUTHORIZATION_SESSIONS.get(id);
 
-    // The path includes /external so the Durable Object knows it's an external connection
-    return stub.fetch(new Request(c.req.url.replace("/external/ws", "/external"), c.req.raw));
+    return stub.fetch(c.req.raw);
 });
 
 // External device login endpoint - returns JSON response

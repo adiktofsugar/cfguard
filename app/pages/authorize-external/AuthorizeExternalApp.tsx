@@ -28,7 +28,7 @@ export default function AuthorizeExternalApp({ backendData }: AuthorizeExternalA
 
         return () => {
             if (wsRef.current) {
-                wsRef.current.close();
+                wsRef.current.close(1000);
             }
             if (reconnectTimeoutRef.current) {
                 clearTimeout(reconnectTimeoutRef.current);
@@ -44,10 +44,11 @@ export default function AuthorizeExternalApp({ backendData }: AuthorizeExternalA
         wsRef.current = ws;
 
         ws.onopen = () => {
-            console.log("WebSocket connected to primary device");
+            console.log("WebSocket connected");
             wsConnected.value = true;
             const pingInterval = setInterval(() => {
                 if (ws.readyState === WebSocket.OPEN) {
+                    console.debug("[ws] Ping");
                     ws.send(JSON.stringify({ type: "ping" }));
                 } else {
                     clearInterval(pingInterval);
@@ -69,13 +70,16 @@ export default function AuthorizeExternalApp({ backendData }: AuthorizeExternalA
             wsConnected.value = false;
         };
 
-        ws.onclose = () => {
-            console.log("WebSocket closed, reconnecting...");
+        ws.onclose = (ev) => {
+            console.log(`WebSocket closed with code ${ev.code}`);
             wsConnected.value = false;
             wsRef.current = null;
-            reconnectTimeoutRef.current = window.setTimeout(() => {
-                connectWebSocket();
-            }, 1000);
+            if (ev.code !== 1000) {
+                console.log("reconnecting...");
+                reconnectTimeoutRef.current = window.setTimeout(() => {
+                    connectWebSocket();
+                }, 1000);
+            }
         };
     };
 
@@ -100,7 +104,13 @@ export default function AuthorizeExternalApp({ backendData }: AuthorizeExternalA
             });
 
             if (response.ok) {
-                const result: { success: boolean; code?: string; state?: string; redirectUri?: string; error?: string } = await response.json();
+                const result: {
+                    success: boolean;
+                    code?: string;
+                    state?: string;
+                    redirectUri?: string;
+                    error?: string;
+                } = await response.json();
                 if (result.success) {
                     // Send the code to the primary device via WebSocket
                     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {

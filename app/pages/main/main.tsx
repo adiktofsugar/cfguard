@@ -3,6 +3,7 @@ import App from "./App";
 import "@picocss/pico/css/pico.min.css";
 import "@picocss/pico/css/pico.colors.min.css";
 import "./index.css";
+import type { BackendData } from "./interfaces";
 
 declare global {
     interface Window {
@@ -15,7 +16,7 @@ if (!appElement) {
     throw new Error("Could not find app element");
 }
 
-let backendData;
+let backendData: BackendData;
 try {
     backendData = JSON.parse(window.__BACKEND_DATA__);
 } catch (_err) {
