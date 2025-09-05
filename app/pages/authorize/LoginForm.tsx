@@ -4,7 +4,6 @@ interface LoginFormProps {
     clientId: string;
     redirectUri: string;
     state?: string;
-    disabled: boolean;
 }
 
 const email = signal("");
@@ -12,7 +11,7 @@ const password = signal("");
 const error = signal("");
 const loading = signal(false);
 
-export default function LoginForm({ clientId, redirectUri, state, disabled }: LoginFormProps) {
+export default function LoginForm({ clientId, redirectUri, state }: LoginFormProps) {
     const handleSubmit = async (e: Event) => {
         e.preventDefault();
         error.value = "";
@@ -47,19 +46,8 @@ export default function LoginForm({ clientId, redirectUri, state, disabled }: Lo
         }
     };
 
-    if (disabled) {
-        return (
-            <div class="text-center py-8">
-                <div class="mb-4">
-                    <i class="fas fa-spinner fa-spin fa-2x text-indigo-600"></i>
-                </div>
-                <p>Waiting for external device to complete login...</p>
-            </div>
-        );
-    }
-
     return (
-        <form onSubmit={handleSubmit} class="space-y-6">
+        <form onSubmit={handleSubmit}>
             <div>
                 <label htmlFor="email">Email</label>
                 <input
@@ -71,7 +59,6 @@ export default function LoginForm({ clientId, redirectUri, state, disabled }: Lo
                     onInput={(e) => {
                         email.value = (e.target as HTMLInputElement).value;
                     }}
-                    class="mt-1 block w-full px-3 py-2 border rounded-md"
                 />
             </div>
 
@@ -86,20 +73,18 @@ export default function LoginForm({ clientId, redirectUri, state, disabled }: Lo
                     onInput={(e) => {
                         password.value = (e.target as HTMLInputElement).value;
                     }}
-                    class="mt-1 block w-full px-3 py-2 border rounded-md"
                 />
             </div>
 
             {error.value && (
-                <div class="bg-red-50 p-4 rounded-md">
-                    <p class="text-red-800">{error}</p>
-                </div>
+                <article class="pico-background-red-100">
+                    <p class="pico-color-red-600">{error}</p>
+                </article>
             )}
 
             <button
                 type="submit"
                 disabled={loading.value}
-                class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
             >
                 {loading.value ? "Signing in..." : "Sign in"}
             </button>

@@ -21,7 +21,6 @@ const appElement = document.getElementById("app");
 if (!appElement) {
     throw new Error("Could not find app element");
 }
-
 let backendData: BackendData;
 try {
     backendData = JSON.parse(window.__BACKEND_DATA__);

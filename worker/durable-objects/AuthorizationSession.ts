@@ -113,6 +113,8 @@ class AuthorizationSession extends DurableObject<Env> {
         const data = ws.deserializeAttachment();
         if (data) {
             if (isSessionData(data)) {
+                console.log(`Closing ${data.connectionId}`);
+
                 if (data.connectionType === "external") {
                     console.info("disconnecting external websocket connection");
                     this.externalDeviceConnected = false;
