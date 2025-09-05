@@ -25,6 +25,7 @@
         "express": "^4.21.2",
         "hono": "^4.9.5",
         "js-logger": "^1.6.1",
+        "mobx": "^6.13.7",
         "qrcode": "^1.5.4"
     },
     "devDependencies": {

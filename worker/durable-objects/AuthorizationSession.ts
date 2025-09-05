@@ -10,19 +10,25 @@ interface SessionData {
 class AuthorizationSession extends DurableObject<Env> {
     private authorizationCode: string | null = null;
     private externalDeviceConnected = false;
+    private primaryDeviceConnected = false;
 
     constructor(state: DurableObjectState, env: Env) {
         super(state, env);
         setupLogger(env);
-        console.log("AuthorizationSession created");
+        Logger.debug("AuthorizationSession created");
 
         this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair("ping", "pong"));
 
         // access websocket clients that are still connected (although potentially this object has hibernated)
         this.ctx.getWebSockets().forEach((ws) => {
             const data = ws.deserializeAttachment();
-            if (isSessionData(data) && data.connectionType === "external") {
-                this.externalDeviceConnected = true;
+            if (isSessionData(data)) {
+                if (data.connectionType === "external") {
+                    this.externalDeviceConnected = true;
+                }
+                if (data.connectionType === "primary") {
+                    this.primaryDeviceConnected = true;
+                }
             }
         });
     }
@@ -48,17 +54,22 @@ class AuthorizationSession extends DurableObject<Env> {
                 connectionType,
                 connectionId,
             };
-            console.log("Setting sessionData on socket", sessionData);
+            Logger.debug("Setting sessionData on socket", sessionData);
             server.serializeAttachment(sessionData);
 
             if (connectionType === "external") {
                 this.externalDeviceConnected = true;
                 this.broadcast({ type: "external_connected" }, connectionId);
             }
+            if (connectionType === "primary") {
+                this.primaryDeviceConnected = true;
+                this.broadcast({ type: "primary_connected" }, connectionId);
+            }
             server.send(
                 JSON.stringify({
                     type: "status",
                     externalDeviceConnected: this.externalDeviceConnected,
+                    primaryDeviceConnected: this.primaryDeviceConnected,
                     hasCode: !!this.authorizationCode,
                 }),
             );
@@ -76,36 +87,50 @@ class AuthorizationSession extends DurableObject<Env> {
         const data = ws.deserializeAttachment();
         if (!data) return;
         if (!isSessionData(data)) {
-            console.warn("data is not session data in webSocketMessage", data);
-            return;
-        }
-        const isExternal = data.connectionType === "external";
-        if (!isExternal) {
+            Logger.warn("data is not session data in webSocketMessage", data);
             return;
         }
 
-        console.log("external connection sent message", message);
+        Logger.debug(`${data.connectionType} device sent message`, message);
         try {
             const msg = JSON.parse(message);
 
             switch (msg.type) {
+                case "request_params":
+                    // External device requesting OIDC params - broadcast to primary device
+                    if (data.connectionType === "external") {
+                        Logger.debug("External device requesting OIDC params");
+                        this.broadcastToPrimary({ type: "request_params" });
+                    }
+                    break;
+
+                case "params_response":
+                    // Primary device responding with OIDC params - send to external device
+                    if (data.connectionType === "primary") {
+                        Logger.debug("Primary device sending OIDC params", msg.params);
+                        this.broadcastToExternal({
+                            type: "params_response",
+                            params: msg.params,
+                        });
+                    }
+                    break;
+
                 case "code_generated":
-                    this.authorizationCode = msg.code;
-                    this.broadcast(
-                        {
+                    // External device sending auth code - broadcast to primary
+                    if (data.connectionType === "external") {
+                        this.authorizationCode = msg.code;
+                        this.broadcastToPrimary({
                             type: "code_received",
                             code: msg.code,
-                            state: msg.state,
-                            redirect_uri: msg.redirect_uri,
-                        },
-                        data.connectionId,
-                    );
+                        });
+                    }
                     break;
+
                 default:
-                    console.warn("Unknown msg type", msg.type);
+                    Logger.warn("Unknown msg type", msg.type);
             }
         } catch (error) {
-            console.error("Error handling message:", error);
+            Logger.error("Error handling message:", error);
         }
     }
 
@@ -113,21 +138,26 @@ class AuthorizationSession extends DurableObject<Env> {
         const data = ws.deserializeAttachment();
         if (data) {
             if (isSessionData(data)) {
-                console.log(`Closing ${data.connectionId}`);
+                Logger.debug(`Closing ${data.connectionId}`);
 
                 if (data.connectionType === "external") {
-                    console.info("disconnecting external websocket connection");
+                    Logger.info("disconnecting external websocket connection");
                     this.externalDeviceConnected = false;
                     this.broadcast({ type: "external_disconnected" }, data.connectionId);
                 }
+                if (data.connectionType === "primary") {
+                    Logger.info("disconnecting primary websocket connection");
+                    this.primaryDeviceConnected = false;
+                    this.broadcast({ type: "primary_disconnected" }, data.connectionId);
+                }
             } else {
-                console.warn("data is not session data in webSocketClose", data);
+                Logger.warn("data is not session data in webSocketClose", data);
             }
         }
         if (code === 1005) {
             // https://github.com/vert-x3/issues/issues/297
             // https://github.com/Luka967/websocket-close-codes
-            console.log(
+            Logger.debug(
                 `code is ${code}, meaning the browser auto-closed it (probably), so we're changing to 1001`,
             );
             code = 1001;
@@ -137,25 +167,59 @@ class AuthorizationSession extends DurableObject<Env> {
     }
 
     async webSocketError(_ws: WebSocket, error: unknown) {
-        console.error("WebSocket error:", error);
+        Logger.error("WebSocket error:", error);
     }
 
-    private broadcast(message: any, excludeId?: string) {
+    private broadcast(message: any, _excludeId?: string) {
         const messageStr = JSON.stringify(message);
         const sockets = this.ctx.getWebSockets();
-        console.log(`broadcasting ${messageStr} to ${sockets.length} sockets`);
+        Logger.debug(`broadcasting ${messageStr} to ${sockets.length} sockets`);
 
         for (const ws of sockets) {
             const data = ws.deserializeAttachment();
             if (isSessionData(data)) {
-                console.log("sending to", data.connectionId);
+                Logger.debug("sending to", data.connectionId);
                 try {
                     ws.send(messageStr);
                 } catch (error) {
-                    console.error("Error sending to connection:", data.connectionId, error);
+                    Logger.error("Error sending to connection:", data.connectionId, error);
                 }
             } else {
-                console.warn("data on socket is not session data, it's", data);
+                Logger.warn("data on socket is not session data, it's", data);
+            }
+        }
+    }
+
+    private broadcastToPrimary(message: any) {
+        const messageStr = JSON.stringify(message);
+        const sockets = this.ctx.getWebSockets();
+
+        for (const ws of sockets) {
+            const data = ws.deserializeAttachment();
+            if (isSessionData(data) && data.connectionType === "primary") {
+                Logger.debug("Sending to primary device:", data.connectionId);
+                try {
+                    ws.send(messageStr);
+                } catch (error) {
+                    Logger.error("Error sending to primary:", error);
+                }
+            }
+        }
+    }
+
+    private broadcastToExternal(message: any) {
+        const messageStr = JSON.stringify(message);
+        const sockets = this.ctx.getWebSockets();
+
+        for (const ws of sockets) {
+            const data = ws.deserializeAttachment();
+            if (isSessionData(data) && data.connectionType === "external") {
+                Logger.debug("Sending to external device:", data.connectionId);
+                try {
+                    ws.send(messageStr);
+                } catch (error) {
+                    Logger.error("Error sending to external:", error);
+                }
             }
         }
     }

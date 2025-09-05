@@ -1,10 +1,7 @@
-interface BackendData {
-    code?: string;
-    state?: string;
-}
+import type { CallbackBackendData } from "../../interfaces";
 
 interface CallbackAppProps {
-    data: BackendData;
+    data: CallbackBackendData;
 }
 
 export default function CallbackApp({ data }: CallbackAppProps) {

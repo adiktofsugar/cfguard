@@ -1,5 +1,5 @@
 import Logger from "js-logger";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 import type { WebSocketStatus } from "../interfaces";
 
 export default function useWebSocketConnection<Data>({
@@ -7,11 +7,16 @@ export default function useWebSocketConnection<Data>({
     onMessage,
 }: {
     url: URL;
-    onMessage?: (data: Data) => unknown;
+    onMessage?: (data: Data, ws: WebSocket) => unknown;
 }) {
     const [status, setStatus] = useState<WebSocketStatus>({ type: "disconnected" });
     const wsRef = useRef<WebSocket | null>(null);
     const reconnectTimeoutRef = useRef<number | null>(null);
+
+    const send = useCallback((message: string) => {
+        if (!wsRef.current) throw new Error(`WebSocket not connected`);
+        wsRef.current.send(message);
+    }, []);
 
     useEffect(() => {
         connectWebSocket();
@@ -36,18 +41,11 @@ export default function useWebSocketConnection<Data>({
         ws.onopen = () => {
             Logger.debug("WebSocket connected");
             setStatus({ type: "connected" });
-            const pingInterval = setInterval(() => {
-                if (ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({ type: "ping" }));
-                } else {
-                    clearInterval(pingInterval);
-                }
-            }, 30000);
         };
 
         ws.onmessage = (event) => {
             Logger.debug("WebSocket message:", event.data);
-            onMessage?.(event.data as Data);
+            onMessage?.(event.data as Data, ws);
         };
 
         ws.onerror = (error) => {
@@ -67,5 +65,5 @@ export default function useWebSocketConnection<Data>({
             }
         };
     };
-    return { wsStatus: status, ws: wsRef.current };
+    return { wsStatus: status, wsSend: send };
 }

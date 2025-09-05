@@ -5,7 +5,9 @@ import CallbackApp from "../callback/CallbackApp";
 import RoutePreview from "./RoutePreview";
 
 export default function DevApp() {
-    const [currentRoute, setCurrentRoute] = useState<"menu" | "authorize" | "authorize-external" | "callback">("menu");
+    const [currentRoute, setCurrentRoute] = useState<
+        "menu" | "authorize" | "authorize-external" | "callback"
+    >("menu");
 
     // Sample data for each route
     const sessionId = "sample-session-id-123";
@@ -15,14 +17,11 @@ export default function DevApp() {
         redirectUri: "https://example.com/callback",
         state: "random-state-123",
         responseType: "code",
-        externalUrl: `https://example.com/authorize/${sessionId}/external?client_id=example-client-id&redirect_uri=${encodeURIComponent("https://example.com/callback")}&state=random-state-123`,
+        externalUrl: `https://example.com/authorize/${sessionId}/external`,
     };
 
     const authorizeExternalData = {
         sessionId,
-        clientId: "example-client-id",
-        redirectUri: "https://example.com/callback",
-        state: "random-state-123",
     };
 
     const callbackData = {
@@ -93,7 +92,10 @@ export default function DevApp() {
                             <small>/authorize/:id - Primary device</small>
                         </button>
 
-                        <button onClick={() => setCurrentRoute("authorize-external")} class="outline">
+                        <button
+                            onClick={() => setCurrentRoute("authorize-external")}
+                            class="outline"
+                        >
                             <strong>Authorize External</strong>
                             <br />
                             <small>/authorize/:id/external - External device</small>

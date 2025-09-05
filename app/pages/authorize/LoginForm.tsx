@@ -82,10 +82,7 @@ export default function LoginForm({ clientId, redirectUri, state }: LoginFormPro
                 </article>
             )}
 
-            <button
-                type="submit"
-                disabled={loading.value}
-            >
+            <button type="submit" disabled={loading.value}>
                 {loading.value ? "Signing in..." : "Sign in"}
             </button>
         </form>

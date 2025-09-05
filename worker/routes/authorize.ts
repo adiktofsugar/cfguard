@@ -9,7 +9,6 @@ const authorize = new Hono<{ Bindings: Env }>();
 authorize.get("/authorize", async (c) => {
     const clientId = c.req.query("client_id");
     const redirectUri = c.req.query("redirect_uri");
-    const _state = c.req.query("state");
     const responseType = c.req.query("response_type");
 
     Logger.debug("Authorization request", c.req.query());
@@ -41,13 +40,15 @@ authorize.get("/authorize/:id", async (c) => {
         return c.text("Invalid request", 400);
     }
 
+    // No need to store OIDC parameters - primary device will provide them via WebSocket
+
     const backendData = {
         sessionId,
         clientId,
         redirectUri,
         state,
         responseType,
-        externalUrl: `${new URL(c.req.url).origin}/authorize/${sessionId}/external?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state || ""}`,
+        externalUrl: `${new URL(c.req.url).origin}/authorize/${sessionId}/external`,
     };
 
     return fetchAndInjectHTML(c, "authorize", "Sign In - CFGuard", backendData);
@@ -71,21 +72,11 @@ authorize.get("/authorize/:id/ws", async (c) => {
 // External device login page
 authorize.get("/authorize/:id/external", async (c) => {
     const sessionId = c.req.param("id");
-    const clientId = c.req.query("client_id");
-    const redirectUri = c.req.query("redirect_uri");
-    const state = c.req.query("state");
 
-    Logger.debug("External device authorization", { sessionId, clientId, redirectUri, state });
-
-    if (!clientId || !redirectUri) {
-        return c.text("Invalid request", 400);
-    }
+    Logger.debug("External device authorization", { sessionId });
 
     const backendData = {
         sessionId,
-        clientId,
-        redirectUri,
-        state,
     };
 
     return fetchAndInjectHTML(
@@ -119,9 +110,14 @@ authorize.post("/authorize/:id/external/login", async (c) => {
     const password = formData.password as string;
     const clientId = formData.client_id as string;
     const redirectUri = formData.redirect_uri as string;
-    const state = formData.state as string;
 
-    Logger.debug("External device login attempt", { sessionId, ...formData });
+    Logger.debug("External device login attempt", { sessionId, email, clientId, redirectUri });
+
+    // Validate required parameters
+    if (!clientId || !redirectUri) {
+        Logger.error("Missing OIDC parameters", { clientId, redirectUri });
+        return c.json({ success: false, error: "Missing parameters" }, 400);
+    }
 
     const userKey = `user:${email}`;
     Logger.debug("Looking up user", { email, userKey });
@@ -164,20 +160,20 @@ authorize.post("/authorize/:id/external/login", async (c) => {
     return c.json({
         success: true,
         code,
-        state,
-        redirectUri,
     });
 });
 
 authorize.post("/login", async (c) => {
-    const formData = await c.req.parseBody();
-    const email = formData.email as string;
-    const password = formData.password as string;
-    const clientId = formData.client_id as string;
-    const redirectUri = formData.redirect_uri as string;
-    const state = formData.state as string;
+    const formData: {
+        email: string;
+        password: string;
+        client_id: string;
+        redirect_uri: string;
+        state: string;
+    } = await c.req.parseBody();
+    const { email, password, client_id: clientId, redirect_uri: redirectUri, state } = formData;
 
-    Logger.debug("Login attempt", formData);
+    Logger.debug("Login attempt", { ...formData, password: "(password)" });
 
     const userKey = `user:${email}`;
     Logger.debug("Looking up user", { email, userKey });

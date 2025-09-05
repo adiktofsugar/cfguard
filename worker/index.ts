@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import Logger from "js-logger";
+import { setupLogger } from "./lib/logger";
 import authorize from "./routes/authorize";
 import callback from "./routes/callback";
 import clientCheck from "./routes/client-check";
@@ -9,7 +10,6 @@ import main from "./routes/main";
 import token from "./routes/token";
 import userCheck from "./routes/user-check";
 import userinfo from "./routes/userinfo";
-import { setupLogger } from "./lib/logger";
 
 const app = new Hono<{ Bindings: Env }>();
 

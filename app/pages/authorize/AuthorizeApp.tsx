@@ -1,30 +1,20 @@
 import { signal } from "@preact/signals";
-import { useEffect, useRef } from "preact/hooks";
-import LoginForm from "./LoginForm";
 import QRCodeDisplay from "../../components/QRCodeDisplay";
 import useWebSocketConnection from "../../components/useWebSocketConnection";
 import WebSocketStatus from "../../components/WebSocketStatus";
-
-interface BackendData {
-    sessionId: string;
-    clientId: string;
-    redirectUri: string;
-    state?: string;
-    responseType: string;
-    externalUrl: string;
-}
+import LoginForm from "./LoginForm";
+import type { AuthorizeBackendData } from "../../interfaces";
 
 interface AuthorizeAppProps {
-    backendData: BackendData;
+    backendData: AuthorizeBackendData;
 }
 
 const externalDeviceConnected = signal(false);
-const wsConnected = signal(false);
 
 export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
     const { wsStatus } = useWebSocketConnection<string>({
         url: new URL(`/authorize/${backendData.sessionId}/ws`, location.href),
-        onMessage(raw) {
+        onMessage(raw, ws) {
             const data = JSON.parse(raw);
             switch (data.type) {
                 case "status":
@@ -36,11 +26,24 @@ export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
                 case "external_disconnected":
                     externalDeviceConnected.value = false;
                     break;
+                case "request_params":
+                    // External device is requesting OIDC params - respond with our params
+                    ws.send(
+                        JSON.stringify({
+                            type: "params_response",
+                            params: {
+                                clientId: backendData.clientId,
+                                redirectUri: backendData.redirectUri,
+                                state: backendData.state,
+                            },
+                        }),
+                    );
+                    break;
                 case "code_received": {
-                    const redirectUrl = new URL(data.redirect_uri);
+                    const redirectUrl = new URL(backendData.redirectUri);
                     redirectUrl.searchParams.set("code", data.code);
-                    if (data.state) {
-                        redirectUrl.searchParams.set("state", data.state);
+                    if (backendData.state) {
+                        redirectUrl.searchParams.set("state", backendData.state);
                     }
                     window.location.href = redirectUrl.toString();
                     break;

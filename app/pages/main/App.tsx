@@ -3,10 +3,10 @@ import { useEffect, useState } from "preact/hooks";
 import { FontAwesomeIcon } from "../../components/FontAwesomeIcon";
 import { ClientGenerator } from "./ClientGenerator";
 import { UserGenerator } from "./UserGenerator";
-import type { BackendData } from "./interfaces";
+import type { MainBackendData } from "../../interfaces";
 
 interface AppProps {
-    backendData: BackendData;
+    backendData: MainBackendData;
 }
 
 export default function App({ backendData }: AppProps) {
