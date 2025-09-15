@@ -3,6 +3,7 @@ import Logger from "js-logger";
 import type { UserData } from "../interfaces";
 import { verifyPassword } from "../lib/crypto";
 import { fetchAndInjectHTML } from "../lib/html-helper";
+import qrcode from "qrcode-generator";
 
 const authorize = new Hono<{ Bindings: Env }>();
 
@@ -51,7 +52,7 @@ authorize.get("/authorize/:id", async (c) => {
         externalUrl: `${new URL(c.req.url).origin}/authorize/${sessionId}/external`,
     };
 
-    return fetchAndInjectHTML(c, "authorize", "Sign In - CFGuard", backendData);
+    return fetchAndInjectHTML(c, "authorize-kobo", "Sign In - CFGuard", backendData);
 });
 
 // WebSocket endpoint for primary device
@@ -225,6 +226,40 @@ authorize.post("/login", async (c) => {
     });
 
     return c.redirect(redirectUrl.toString(), 302);
+});
+
+authorize.get("/qrcode/:sessionId", async (c) => {
+    const sessionId = c.req.param("sessionId");
+
+    if (!sessionId) {
+        return c.text("Missing session ID", 400);
+    }
+
+    const origin = new URL(c.req.url).origin;
+    const url = `${origin}/authorize/${sessionId}/external`;
+
+    try {
+        // Create QR code instance
+        const qr = qrcode(0, "L");
+        qr.addData(url);
+        qr.make();
+
+        // Generate SVG string
+        const svgString = qr.createSvgTag({
+            cellSize: 8,
+            margin: 2,
+        });
+
+        return new Response(svgString, {
+            headers: {
+                "Content-Type": "image/svg+xml",
+                "Cache-Control": "public, max-age=3600",
+            },
+        });
+    } catch (error) {
+        console.error("Failed to generate QR code:", error);
+        return c.text("Failed to generate QR code", 500);
+    }
 });
 
 export default authorize;

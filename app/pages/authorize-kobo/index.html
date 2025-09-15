@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFGuard - Authorize</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        .qr-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .qr-container img {
+            max-width: 256px;
+            width: 100%;
+            height: auto;
+        }
+
+        #error-message {
+            color: red;
+            margin-top: 1rem;
+        }
+
+        #status-message {
+            color: green;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        #debug-info {
+            margin-top: 2rem;
+            text-align: left;
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #ccc;
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <article>
+            <header>
+                <h1>Sign in</h1>
+            </header>
+
+
+
+            <div class="qr-container">
+                <h3>Scan with Mobile App</h3>
+                <div id="qr-code">
+                    <p>Loading QR code...</p>
+                </div>
+                <p id="qr-status">Waiting for connection...</p>
+            </div>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+
+            <form id="login-form" action="/login" method="post">
+                <label for="username">
+                    Username
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required />
+                </label>
+
+                <label for="password">
+                    Password
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required />
+                </label>
+
+                <button type="submit">Sign In</button>
+            </form>
+
+            <p id="status-message"></p>
+            <p id="error-message"></p>
+            <div id="debug-info"></div>
+        </article>
+    </main>
+    <!--BACKEND_DATA-->
+    <script type="module" src="./main.ts"></script>
+</body>
+
+</html>
