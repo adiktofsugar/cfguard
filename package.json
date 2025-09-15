@@ -2,16 +2,18 @@
     "name": "cfguard",
     "version": "1.0.0",
     "scripts": {
-        "build": "tsx scripts/build.mts",
-        "dev": "tsx scripts/build.mts --dev",
-        "deploy": "tsx scripts/build.mts && wrangler deploy --config wrangler.jsonc",
+        "dev": "concurrently -n vite,wrangler \"vite build --watch\" \"wrangler dev\"",
+        "build": "vite build",
+        "deploy": "vite build && wrangler deploy",
         "log": "wrangler tail",
         "test": "playwright test",
         "types": "wrangler types worker/worker-types.d.ts",
         "lint": "concurrently -gr npm:lint:*",
         "lint:biome": "biome check",
         "lint:tsc": "tsc --build",
-        "fix": "biome check --fix --unsafe ."
+        "fix": "biome check --fix --unsafe .",
+        "build:old": "tsx scripts/build.mts",
+        "dev:old": "tsx scripts/build.mts --dev"
     },
     "author": "",
     "license": "ISC",
@@ -30,8 +32,10 @@
     },
     "devDependencies": {
         "@biomejs/biome": "^2.2.0",
+        "@cloudflare/vite-plugin": "^1.12.3",
         "@cloudflare/workers-types": "^4.20250831.0",
         "@playwright/test": "^1.55.0",
+        "@preact/preset-vite": "^2.10.2",
         "@preact/signals": "^2.3.1",
         "@tsconfig/node22": "^22.0.2",
         "@types/minimist": "^1.2.5",
@@ -42,6 +46,7 @@
         "preact": "^10.19.3",
         "tsx": "^4.20.4",
         "typescript": "^5.9.2",
+        "vite": "^7.1.4",
         "wrangler": "^4.31.0"
     }
 }
