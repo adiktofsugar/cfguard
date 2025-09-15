@@ -1,4 +1,5 @@
 import { signal } from "@preact/signals";
+import type { LoginResponse } from "./interfaces";
 
 interface LoginFormProps {
     clientId: string;
@@ -32,16 +33,17 @@ export default function LoginForm({ clientId, redirectUri, state }: LoginFormPro
                 body: formData,
             });
 
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else if (!response.ok) {
-                const text = await response.text();
-                error.value = text || "Login failed";
-                loading.value = false;
+            const data: LoginResponse = await response.json();
+
+            if (data.success) {
+                window.location.href = data.redirectUrl;
+            } else {
+                error.value = data.error;
             }
         } catch (err) {
             console.error("Login error:", err);
             error.value = "An error occurred during login";
+        } finally {
             loading.value = false;
         }
     };

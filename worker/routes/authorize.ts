@@ -195,7 +195,7 @@ authorize.post("/login", async (c) => {
 
     if (!validLogin || !userData) {
         Logger.warn("Login failed", { email, validLogin, userData });
-        return c.text("Invalid credentials", 401);
+        return c.json({ success: false, error: "Invalid credentials" }, 401);
     }
 
     Logger.info("Login successful", userData);
@@ -219,13 +219,16 @@ authorize.post("/login", async (c) => {
         redirectUrl.searchParams.set("state", state);
     }
 
-    Logger.info("Redirecting with authorization code", {
+    Logger.info("Returning redirect URL with authorization code", {
         redirectUrl: redirectUrl.toString(),
         code,
         state,
     });
 
-    return c.redirect(redirectUrl.toString(), 302);
+    return c.json({
+        success: true,
+        redirectUrl: redirectUrl.toString(),
+    });
 });
 
 authorize.get("/qrcode/:sessionId", async (c) => {
