@@ -67,7 +67,7 @@ export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
                                 <h2>Sign in on another device</h2>
                                 <p>By scanning this QR code</p>
                             </hgroup>
-                            <QRCodeDisplay url={backendData.externalUrl} />
+                            <QRCodeDisplay sessionId={backendData.sessionId} />
                         </div>
                         <hr />
                         <div>

@@ -7,6 +7,7 @@ import clientCheck from "./routes/client-check";
 import dev from "./routes/dev";
 import discovery from "./routes/discovery";
 import main from "./routes/main";
+import qrcode from "./routes/qrcode";
 import token from "./routes/token";
 import userCheck from "./routes/user-check";
 import userinfo from "./routes/userinfo";
@@ -28,6 +29,7 @@ app.route("/", userinfo);
 app.route("/", callback);
 app.route("/", clientCheck);
 app.route("/", userCheck);
+app.route("/", qrcode);
 
 app.notFound((c) => c.text("Not Found", 404));
 
