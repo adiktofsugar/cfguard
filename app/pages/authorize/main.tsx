@@ -1,3 +1,5 @@
+import "@picocss/pico/css/pico.min.css";
+import "@picocss/pico/css/pico.colors.css";
 import { render } from "preact";
 import AuthorizeApp from "./AuthorizeApp";
 import type { AuthorizeBackendData } from "../../interfaces";

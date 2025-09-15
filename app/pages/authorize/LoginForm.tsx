@@ -77,9 +77,7 @@ export default function LoginForm({ clientId, redirectUri, state }: LoginFormPro
             </div>
 
             {error.value && (
-                <article>
-                    <p>{error}</p>
-                </article>
+                <article class="pico-background-red-100 pico-color-red-600">{error}</article>
             )}
 
             <button type="submit" disabled={loading.value}>
