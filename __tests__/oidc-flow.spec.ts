@@ -21,16 +21,20 @@ test.describe("OIDC Provider Flow", () => {
     const redirectUri = "https://example.com/callback";
     const state = crypto.randomBytes(16).toString("hex");
 
-    test("should expose discovery endpoint", async ({ request }) => {
-        const response = await request.get("/.well-known/openid-configuration");
+    test("should expose discovery endpoint", async ({ request, baseURL }) => {
+        const response = await request.get("/.well-known/openid-configuration", {
+            headers: {
+                "X-Forwarded-Proto": "http",
+            },
+        });
         expect(response.ok()).toBeTruthy();
 
         const config = await response.json();
-        expect(config.issuer).toBe("https://login.sackof.rocks");
-        expect(config.authorization_endpoint).toBe("https://login.sackof.rocks/authorize");
-        expect(config.token_endpoint).toBe("https://login.sackof.rocks/token");
-        expect(config.userinfo_endpoint).toBe("https://login.sackof.rocks/userinfo");
-        expect(config.jwks_uri).toBe("https://login.sackof.rocks/.well-known/jwks.json");
+        expect(config.issuer).toBe(`${baseURL}`);
+        expect(config.authorization_endpoint).toBe(`${baseURL}/authorize`);
+        expect(config.token_endpoint).toBe(`${baseURL}/token`);
+        expect(config.userinfo_endpoint).toBe(`${baseURL}/userinfo`);
+        expect(config.jwks_uri).toBe(`${baseURL}/.well-known/jwks.json`);
         expect(config.response_types_supported).toContain("code");
         expect(config.id_token_signing_alg_values_supported).toContain("RS256");
     });
@@ -69,9 +73,9 @@ test.describe("OIDC Provider Flow", () => {
         expect(response.status()).toBe(400);
     });
 
-    test("should complete full authorization code flow", async ({ page, request }) => {
+    test("should complete full authorization code flow", async ({ page, request, baseURL }) => {
         // Use localhost redirect URI for testing
-        const testRedirectUri = "http://localhost:8787/callback";
+        const testRedirectUri = `${baseURL}/callback`;
 
         // 1. Start authorization
         await page.goto(
@@ -123,7 +127,7 @@ test.describe("OIDC Provider Flow", () => {
         const idToken = parseJWT(tokens.id_token);
         expect(idToken.header.alg).toBe("RS256");
         expect(idToken.header.typ).toBe("JWT");
-        expect(idToken.payload.iss).toBe("https://login.sackof.rocks");
+        expect(idToken.payload.iss).toBe(`${baseURL}`);
         expect(idToken.payload.aud).toBe(clientId);
         expect(idToken.payload.sub).toBeTruthy();
         expect(idToken.payload.email).toBe("admin@example.com");

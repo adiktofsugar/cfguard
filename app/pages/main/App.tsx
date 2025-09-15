@@ -87,7 +87,7 @@ export default function App({ backendData }: AppProps) {
                                 <td>
                                     <code>
                                         GET
-                                        https://login.sackof.rocks/.well-known/openid-configuration
+                                        {location.origin}/.well-known/openid-configuration
                                     </code>
                                 </td>
                                 <td>Provider metadata and endpoint URLs</td>
@@ -97,7 +97,7 @@ export default function App({ backendData }: AppProps) {
                                     <strong>Authorization</strong>
                                 </td>
                                 <td>
-                                    <code>GET https://login.sackof.rocks/authorize</code>
+                                    <code>GET {location.origin}/authorize</code>
                                 </td>
                                 <td>User authentication</td>
                             </tr>
@@ -106,7 +106,7 @@ export default function App({ backendData }: AppProps) {
                                     <strong>Token</strong>
                                 </td>
                                 <td>
-                                    <code>POST https://login.sackof.rocks/token</code>
+                                    <code>POST {location.origin}/token</code>
                                 </td>
                                 <td>Exchange authorization codes for tokens</td>
                             </tr>
@@ -115,9 +115,7 @@ export default function App({ backendData }: AppProps) {
                                     <strong>JWKS</strong>
                                 </td>
                                 <td>
-                                    <code>
-                                        GET https://login.sackof.rocks/.well-known/jwks.json
-                                    </code>
+                                    <code>GET {location.origin}/.well-known/jwks.json</code>
                                 </td>
                                 <td>Public keys for JWT verification</td>
                             </tr>
