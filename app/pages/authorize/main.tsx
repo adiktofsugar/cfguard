@@ -24,15 +24,18 @@ const debugEl = document.getElementById("debug-info");
 if (!debugEl) {
     throw new Error(`No debug-info element`);
 }
-Logger.setLevel(Logger.DEBUG);
+Logger.setLevel(Logger.INFO);
 Logger.setHandler((messages, context) => {
     defaultLogger(messages, context);
-    const line = document.createElement("pre");
-    line.innerText = [context.level.name, new Date().toLocaleDateString(), ...messages].join(" ");
-    debugEl.appendChild(line);
+    if (context.level.value >= Logger.WARN.value) {
+        const line = document.createElement("pre");
+        line.innerText = [context.level.name, new Date().toLocaleDateString(), ...messages].join(
+            " ",
+        );
+        debugEl.appendChild(line);
+    }
 });
 window.onerror = (err) => {
     Logger.error(err instanceof Error ? err.stack || err.message : String(err));
 };
-Logger.info("Starting app");
 render(<AuthorizeApp backendData={backendData} />, appElement);
