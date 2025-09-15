@@ -2,8 +2,8 @@ import { signal } from "@preact/signals";
 import QRCodeDisplay from "../../components/QRCodeDisplay";
 import useWebSocketConnection from "../../components/useWebSocketConnection";
 import WebSocketStatus from "../../components/WebSocketStatus";
-import LoginForm from "./LoginForm";
 import type { AuthorizeBackendData } from "../../interfaces";
+import LoginForm from "./LoginForm";
 
 interface AuthorizeAppProps {
     backendData: AuthorizeBackendData;
@@ -13,7 +13,7 @@ const externalDeviceConnected = signal(false);
 
 export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
     const { wsStatus } = useWebSocketConnection<string>({
-        url: new URL(`/authorize/${backendData.sessionId}/ws`, location.href),
+        url: `${location.protocol}//${location.host}/authorize/${backendData.sessionId}/ws`,
         onMessage(raw, ws) {
             const data = JSON.parse(raw);
             switch (data.type) {
@@ -40,12 +40,14 @@ export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
                     );
                     break;
                 case "code_received": {
-                    const redirectUrl = new URL(backendData.redirectUri);
-                    redirectUrl.searchParams.set("code", data.code);
+                    // Build redirect URL with query params using string manipulation
+                    let redirectUrl = backendData.redirectUri;
+                    const separator = redirectUrl.includes("?") ? "&" : "?";
+                    redirectUrl += `${separator}code=${encodeURIComponent(data.code)}`;
                     if (backendData.state) {
-                        redirectUrl.searchParams.set("state", backendData.state);
+                        redirectUrl += `&state=${encodeURIComponent(backendData.state)}`;
                     }
-                    window.location.href = redirectUrl.toString();
+                    window.location.href = redirectUrl;
                     break;
                 }
             }
@@ -55,9 +57,7 @@ export default function AuthorizeApp({ backendData }: AuthorizeAppProps) {
     return (
         <div class="container">
             {externalDeviceConnected.value ? (
-                <article class="pico-background-green-500">
-                    External device connected - waiting for login...
-                </article>
+                <article>External device connected - waiting for login...</article>
             ) : (
                 <div class="grid">
                     <div>

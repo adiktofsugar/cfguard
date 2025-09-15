@@ -16,7 +16,6 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
-                "authorize-kobo": path.resolve("app/pages/authorize-kobo/index.html"),
                 authorize: path.resolve("app/pages/authorize/index.html"),
                 callback: path.resolve("app/pages/callback/index.html"),
                 dev: path.resolve("app/pages/dev/index.html"),

@@ -21,7 +21,7 @@ const primaryDeviceConnected = signal(false);
 
 export default function AuthorizeExternalApp({ backendData }: AuthorizeExternalAppProps) {
     const { wsSend, wsStatus } = useWebSocketConnection<string>({
-        url: new URL(`/authorize/${backendData.sessionId}/external/ws`, location.href),
+        url: `${location.protocol}//${location.host}/authorize/${backendData.sessionId}/external/ws`,
         onMessage(raw) {
             const data = JSON.parse(raw);
             switch (data.type) {

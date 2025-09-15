@@ -52,7 +52,7 @@ authorize.get("/authorize/:id", async (c) => {
         externalUrl: `${new URL(c.req.url).origin}/authorize/${sessionId}/external`,
     };
 
-    return fetchAndInjectHTML(c, "authorize-kobo", "Sign In - CFGuard", backendData);
+    return fetchAndInjectHTML(c, "authorize", "Sign In - CFGuard", backendData);
 });
 
 // WebSocket endpoint for primary device

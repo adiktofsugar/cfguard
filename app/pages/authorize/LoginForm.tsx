@@ -77,8 +77,8 @@ export default function LoginForm({ clientId, redirectUri, state }: LoginFormPro
             </div>
 
             {error.value && (
-                <article class="pico-background-red-100">
-                    <p class="pico-color-red-600">{error}</p>
+                <article>
+                    <p>{error}</p>
                 </article>
             )}
 

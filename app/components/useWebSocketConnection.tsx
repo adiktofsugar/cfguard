@@ -6,7 +6,7 @@ export default function useWebSocketConnection<Data>({
     url,
     onMessage,
 }: {
-    url: URL;
+    url: string;
     onMessage?: (data: Data, ws: WebSocket) => unknown;
 }) {
     const [status, setStatus] = useState<WebSocketStatus>({ type: "disconnected" });
@@ -33,9 +33,18 @@ export default function useWebSocketConnection<Data>({
     }, []);
 
     const connectWebSocket = () => {
-        if (url.protocol === "https") url.protocol = "wss";
-        if (url.protocol === "http") url.protocol = "ws";
-        const ws = new WebSocket(url);
+        // Convert http/https URL to ws/wss URL
+        let wsUrl = url;
+        if (wsUrl.startsWith("https://")) {
+            wsUrl = wsUrl.replace("https://", "wss://");
+        } else if (wsUrl.startsWith("http://")) {
+            wsUrl = wsUrl.replace("http://", "ws://");
+        } else if (!wsUrl.startsWith("ws://") && !wsUrl.startsWith("wss://")) {
+            // If no protocol, assume based on current page protocol
+            const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+            wsUrl = protocol + wsUrl;
+        }
+        const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
 
         ws.onopen = () => {

@@ -1,7 +1,5 @@
 import { render } from "preact";
 import AuthorizeApp from "./AuthorizeApp";
-import "@picocss/pico/css/pico.min.css";
-import "@picocss/pico/css/pico.colors.css";
 import type { AuthorizeBackendData } from "../../interfaces";
 import Logger from "js-logger";
 
@@ -21,5 +19,20 @@ try {
 } catch (_err) {
     throw new Error("Failed to parse backend data");
 }
-Logger.useDefaults();
+const defaultLogger = Logger.createDefaultHandler();
+const debugEl = document.getElementById("debug-info");
+if (!debugEl) {
+    throw new Error(`No debug-info element`);
+}
+Logger.setLevel(Logger.DEBUG);
+Logger.setHandler((messages, context) => {
+    defaultLogger(messages, context);
+    const line = document.createElement("pre");
+    line.innerText = [context.level.name, new Date().toLocaleDateString(), ...messages].join(" ");
+    debugEl.appendChild(line);
+});
+window.onerror = (err) => {
+    Logger.error(err instanceof Error ? err.stack || err.message : String(err));
+};
+Logger.info("Starting app");
 render(<AuthorizeApp backendData={backendData} />, appElement);
