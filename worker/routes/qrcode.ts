@@ -5,20 +5,20 @@ const qrcodeRoute = new Hono<{ Bindings: Env }>();
 
 qrcodeRoute.get("/qrcode/:sessionId", async (c) => {
     const sessionId = c.req.param("sessionId");
-    
+
     if (!sessionId) {
         return c.text("Missing session ID", 400);
     }
 
     const origin = new URL(c.req.url).origin;
-    const url = `${origin}/authorize/${sessionId}`;
+    const url = `${origin}/authorize/${sessionId}/external`;
 
     try {
         // Create QR code instance
         const qr = qrcode(0, "L");
         qr.addData(url);
         qr.make();
-        
+
         // Generate SVG string
         const svgString = qr.createSvgTag({
             cellSize: 8,
