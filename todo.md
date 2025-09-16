@@ -1,5 +1,9 @@
 # TODO
 
+## Clean up
+
+There _should_ be a cron attached to this worker
+
 ## Improve security
 
 User passwords _could_ have a salt, so that access to R2 doesn't immediately mean total compromise. To do this, I'd need to:
