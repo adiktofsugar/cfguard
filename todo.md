@@ -1,5 +1,13 @@
 # TODO
 
+## Improve security
+
+User passwords _could_ have a salt, so that access to R2 doesn't immediately mean total compromise. To do this, I'd need to:
+
+- add salt / seed to env
+- make password generation a server call
+- rate limit api call to prevent brute force-ing the salt
+
 ## Make storybook-like preview
 
 I want to make a single "app" that just has a bunch of stories. This app should _also_ output the actual files we run.
