@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 import Logger from "js-logger";
+import qrcode from "qrcode-generator";
 import type { UserData } from "../interfaces";
 import { verifyPassword } from "../lib/crypto";
 import { fetchAndInjectHTML } from "../lib/html-helper";
-import qrcode from "qrcode-generator";
 
 const authorize = new Hono<{ Bindings: Env }>();
 
@@ -120,7 +120,7 @@ authorize.post("/authorize/:id/external/login", async (c) => {
         return c.json({ success: false, error: "Missing parameters" }, 400);
     }
 
-    const userKey = `user:${email}`;
+    const userKey = `users/${email}.json`;
     Logger.debug("Looking up user", { email, userKey });
     const userDataObj = await c.env.LOGIN_STORAGE.get(userKey);
 
@@ -155,7 +155,7 @@ authorize.post("/authorize/:id/external/login", async (c) => {
 
     Logger.debug("Generated authorization code", { code, codeData });
 
-    await c.env.LOGIN_STORAGE.put(`code:${code}`, JSON.stringify(codeData));
+    await c.env.LOGIN_STORAGE.put(`codes/${code}.json`, JSON.stringify(codeData));
 
     // Return success with the code - the frontend will send it via WebSocket
     return c.json({
@@ -176,7 +176,7 @@ authorize.post("/login", async (c) => {
 
     Logger.debug("Login attempt", { ...formData, password: "(password)" });
 
-    const userKey = `user:${email}`;
+    const userKey = `users/${email}.json`;
     Logger.debug("Looking up user", { email, userKey });
     const userDataObj = await c.env.LOGIN_STORAGE.get(userKey);
 
@@ -211,7 +211,7 @@ authorize.post("/login", async (c) => {
 
     Logger.debug("Generated authorization code", { code, codeData });
 
-    await c.env.LOGIN_STORAGE.put(`code:${code}`, JSON.stringify(codeData));
+    await c.env.LOGIN_STORAGE.put(`codes/${code}.json`, JSON.stringify(codeData));
 
     const redirectUrl = new URL(redirectUri);
     redirectUrl.searchParams.set("code", code);

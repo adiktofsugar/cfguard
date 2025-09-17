@@ -2,8 +2,8 @@ import { render } from "preact";
 import AuthorizeExternalApp from "./AuthorizeExternalApp";
 import "@picocss/pico/css/pico.min.css";
 import "@picocss/pico/css/pico.colors.css";
-import type { AuthorizeExternalBackendData } from "../../interfaces";
 import Logger from "js-logger";
+import type { AuthorizeExternalBackendData } from "../../interfaces";
 
 declare global {
     interface Window {

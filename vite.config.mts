@@ -1,7 +1,7 @@
-import { defineConfig } from "vite";
+import path from "node:path";
 import preact from "@preact/preset-vite";
 import legacy from "@vitejs/plugin-legacy";
-import path from "node:path";
+import { defineConfig } from "vite";
 
 export default defineConfig({
     plugins: [

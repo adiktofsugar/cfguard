@@ -18,7 +18,7 @@ export interface ClientInfo {
     client_id: string;
     client_secret: string;
     redirect_uris: string[];
-    [key: string]: any;
+    created_at: string;
 }
 
 export interface ValidationResult {

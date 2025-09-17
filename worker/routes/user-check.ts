@@ -9,7 +9,7 @@ userCheck.get("/api/user-check/:email", async (c) => {
     if (!email) {
         return c.json({ error: "Email is required" }, 400);
     }
-    const userData = await c.env.LOGIN_STORAGE.get(`user:${email}`);
+    const userData = await c.env.LOGIN_STORAGE.get(`users/${email}.json`);
     return c.json({
         exists: !!userData,
         email,
@@ -17,7 +17,7 @@ userCheck.get("/api/user-check/:email", async (c) => {
 });
 
 userCheck.get("/api/users", async (c) => {
-    const list = await c.env.LOGIN_STORAGE.list({ prefix: "user:" });
+    const list = await c.env.LOGIN_STORAGE.list({ prefix: "users/" });
     const users = [];
 
     for (const item of list.objects) {

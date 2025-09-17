@@ -70,7 +70,7 @@ token.post("/token", async (c) => {
 
     // Look up the authorization code first to get the actual client_id
     Logger.debug("Looking up authorization code", { code });
-    const codeDataObj = await c.env.LOGIN_STORAGE.get(`code:${code}`);
+    const codeDataObj = await c.env.LOGIN_STORAGE.get(`codes/${code}.json`);
     if (!codeDataObj) {
         Logger.error("Authorization code not found", { code });
         return c.json({ error: "invalid_grant" }, 400);
@@ -111,7 +111,7 @@ token.post("/token", async (c) => {
     }
 
     Logger.debug("Deleting used authorization code");
-    await c.env.LOGIN_STORAGE.delete(`code:${code}`);
+    await c.env.LOGIN_STORAGE.delete(`codes/${code}.json`);
 
     Logger.debug("Getting RSA key pair for JWT signing");
     const { privateKey, publicJwk } = await getOrCreateKeyPair(c.env);
@@ -125,7 +125,10 @@ token.post("/token", async (c) => {
         expires: Date.now() + 3600000,
     };
 
-    await c.env.LOGIN_STORAGE.put(`access_token:${accessToken}`, JSON.stringify(accessTokenData));
+    await c.env.LOGIN_STORAGE.put(
+        `access_tokens/${accessToken}.json`,
+        JSON.stringify(accessTokenData),
+    );
 
     const protocol = c.req.header("X-Forwarded-Proto") || "https";
     const host = c.req.header("Host");

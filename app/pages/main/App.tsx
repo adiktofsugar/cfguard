@@ -1,9 +1,9 @@
 import { faShield } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "preact/hooks";
 import { FontAwesomeIcon } from "../../components/FontAwesomeIcon";
+import type { MainBackendData } from "../../interfaces";
 import { ClientGenerator } from "./ClientGenerator";
 import { UserGenerator } from "./UserGenerator";
-import type { MainBackendData } from "../../interfaces";
 
 interface AppProps {
     backendData: MainBackendData;

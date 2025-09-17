@@ -1,6 +1,6 @@
 {
-  "sub": "44250e33-c38e-4a40-89ed-c6c748d2c57d",
-  "hashFunction": "sha256",
-  "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-  "email": "admin@me.com"
+    "sub": "44250e33-c38e-4a40-89ed-c6c748d2c57d",
+    "hashFunction": "sha256",
+    "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+    "email": "admin@me.com"
 }

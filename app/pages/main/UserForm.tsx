@@ -32,8 +32,8 @@ async function sha256(text: string): Promise<string> {
 export default function UserForm({ r2BucketName, isLocalR2, users }: Props) {
     const sub = useMemo(() => crypto.randomUUID(), []);
 
-    const userKey = computed(() => `user:${email.value}`);
-    const userFilename = computed(() => `user_${email.value}.json`);
+    const userKey = computed(() => `users/${email.value}.json`);
+    const userFilename = computed(() => `${email.value}.json`);
 
     const isValidEmail = computed(() => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

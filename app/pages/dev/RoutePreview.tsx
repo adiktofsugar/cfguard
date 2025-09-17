@@ -1,8 +1,10 @@
+import type { ComponentChildren } from "preact";
+
 interface RoutePreviewProps {
     title: string;
     subtitle: string;
     data: unknown;
-    children: any;
+    children: ComponentChildren;
     onBack: () => void;
 }
 

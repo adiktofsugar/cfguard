@@ -8,7 +8,7 @@
         "log": "wrangler tail",
         "test": "npm run test:setup-data && playwright test",
         "test:setup-data": "concurrently -g npm:test:setup-data:*",
-        "test:setup-data:user": "wrangler r2 object put login/user:admin@me.com --file ./__tests__/data/user_admin@me.com.json --local",
+        "test:setup-data:user": "wrangler r2 object put login/users/admin@me.com.json --file ./__tests__/data/user_admin@me.com.json --local",
         "test:setup-data:client": "wrangler r2 object put login/clients/local-app.json --file ./__tests__/data/user_admin@me.com.json --local",
         "types": "wrangler types worker/worker-types.d.ts",
         "lint": "concurrently -gr npm:lint:*",

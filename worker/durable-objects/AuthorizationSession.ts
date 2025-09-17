@@ -170,7 +170,7 @@ class AuthorizationSession extends DurableObject<Env> {
         Logger.error("WebSocket error:", error);
     }
 
-    private broadcast(message: any, _excludeId?: string) {
+    private broadcast(message: unknown, _excludeId?: string) {
         const messageStr = JSON.stringify(message);
         const sockets = this.ctx.getWebSockets();
         Logger.debug(`broadcasting ${messageStr} to ${sockets.length} sockets`);
@@ -190,7 +190,7 @@ class AuthorizationSession extends DurableObject<Env> {
         }
     }
 
-    private broadcastToPrimary(message: any) {
+    private broadcastToPrimary(message: unknown) {
         const messageStr = JSON.stringify(message);
         const sockets = this.ctx.getWebSockets();
 
@@ -207,7 +207,7 @@ class AuthorizationSession extends DurableObject<Env> {
         }
     }
 
-    private broadcastToExternal(message: any) {
+    private broadcastToExternal(message: unknown) {
         const messageStr = JSON.stringify(message);
         const sockets = this.ctx.getWebSockets();
 

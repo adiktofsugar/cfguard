@@ -1,8 +1,6 @@
 {
-  "client_id": "local-app",
-  "client_secret": "e7f6b27289ab4eff31bb120cd5af5497ed52cbc7e658022c1cc9b7daf0a4bfd4",
-  "redirect_uris": [
-    "https://example.com/callback"
-  ],
-  "created_at": "2025-09-15T07:48:07.447Z"
+    "client_id": "local-app",
+    "client_secret": "e7f6b27289ab4eff31bb120cd5af5497ed52cbc7e658022c1cc9b7daf0a4bfd4",
+    "redirect_uris": ["https://example.com/callback"],
+    "created_at": "2025-09-15T07:48:07.447Z"
 }

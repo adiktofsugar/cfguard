@@ -1,0 +1,22 @@
+{
+    "$schema": "../../../node_modules/@biomejs/biome/configuration_schema.json",
+    "extends": "//",
+    "linter": {
+        "rules": {
+            "a11y": {
+                "useButtonType": "off"
+            },
+            "style": {
+                "noRestrictedGlobals": {
+                    "level": "error",
+                    "options": {
+                        "deniedGlobals": {
+                            "URL": "Kobo doesn't support the global URL object",
+                            "URLSearchParams": "Kobo doesn't support the global URLSearchParams object"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

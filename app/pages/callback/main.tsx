@@ -2,8 +2,8 @@ import { render } from "preact";
 import CallbackApp from "./CallbackApp";
 import "@picocss/pico/css/pico.min.css";
 import "@picocss/pico/css/pico.colors.css";
-import type { CallbackBackendData } from "../../interfaces";
 import Logger from "js-logger";
+import type { CallbackBackendData } from "../../interfaces";
 
 declare global {
     interface Window {

@@ -1,5 +1,8 @@
 {
     "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "files": {
+        "includes": ["**", "!worker/worker-types.d.ts"]
+    },
     "vcs": {
         "clientKind": "git",
         "useIgnoreFile": true,
@@ -8,21 +11,7 @@
     "linter": {
         "enabled": true,
         "rules": {
-            "recommended": true,
-            "a11y": {
-                "useButtonType": "off"
-            },
-            "nursery": {
-                "noGlobalEval": "error"
-            },
-            "style": {
-                "noRestrictedGlobals": {
-                    "level": "error",
-                    "options": {
-                        "deniedGlobals": ["URL", "URLSearchParams"]
-                    }
-                }
-            }
+            "recommended": true
         }
     },
     "formatter": {

@@ -3,8 +3,8 @@ import App from "./App";
 import "@picocss/pico/css/pico.min.css";
 import "@picocss/pico/css/pico.colors.min.css";
 import "./index.css";
-import type { MainBackendData } from "../../interfaces";
 import Logger from "js-logger";
+import type { MainBackendData } from "../../interfaces";
 
 declare global {
     interface Window {

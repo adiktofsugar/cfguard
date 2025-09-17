@@ -9,7 +9,7 @@ userinfo.get("/userinfo", async (c) => {
     }
 
     const accessToken = authHeader.substring(7);
-    const tokenDataObj = await c.env.LOGIN_STORAGE.get(`access_token:${accessToken}`);
+    const tokenDataObj = await c.env.LOGIN_STORAGE.get(`access_tokens/${accessToken}.json`);
 
     if (!tokenDataObj) {
         return c.text("Unauthorized", 401);
