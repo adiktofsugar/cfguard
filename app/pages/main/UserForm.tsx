@@ -42,7 +42,7 @@ export default function UserForm({ r2BucketName, isLocalR2, users }: Props) {
 
     const wranglerUploadCommand = computed(() =>
         userKey.value
-            ? `npx wrangler r2 object put ${r2BucketName}/${userKey.value} --file ${userFilename.value}${isLocalR2 ? " --local" : ""}`
+            ? `npx wrangler r2 object put ${r2BucketName}/${userKey.value} --file ${userFilename.value}${isLocalR2 ? " --local" : "--remote"}`
             : "",
     );
 
@@ -136,10 +136,9 @@ export default function UserForm({ r2BucketName, isLocalR2, users }: Props) {
                         The user <code>{email.value}</code> already exists. To delete it:
                     </p>
 
-                    <div class="command-output">
+                    <div>
                         <pre>{wranglerDeleteCommand.value}</pre>
                         <button
-                            class="copy-button"
                             onClick={() =>
                                 navigator.clipboard.writeText(wranglerDeleteCommand.value)
                             }
@@ -171,10 +170,9 @@ export default function UserForm({ r2BucketName, isLocalR2, users }: Props) {
                             <li>Download the JSON file using the button above</li>
                             <li>
                                 Upload to R2 with this command:
-                                <div class="command-output">
+                                <div>
                                     <pre>{wranglerUploadCommand.value}</pre>
                                     <button
-                                        class="copy-button"
                                         onClick={() =>
                                             navigator.clipboard.writeText(
                                                 wranglerUploadCommand.value,

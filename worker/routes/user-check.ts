@@ -3,19 +3,6 @@ import type { UserData } from "../interfaces";
 
 const userCheck = new Hono<{ Bindings: Env }>();
 
-userCheck.get("/api/user-check/:email", async (c) => {
-    const email = decodeURIComponent(c.req.param("email"));
-
-    if (!email) {
-        return c.json({ error: "Email is required" }, 400);
-    }
-    const userData = await c.env.LOGIN_STORAGE.get(`users/${email}.json`);
-    return c.json({
-        exists: !!userData,
-        email,
-    });
-});
-
 userCheck.get("/api/users", async (c) => {
     const list = await c.env.LOGIN_STORAGE.list({ prefix: "users/" });
     const users = [];

@@ -45,7 +45,7 @@ export default function ClientsForm({ r2BucketName, isLocalR2, clients }: Props)
 
     const wranglerDeleteCommand = computed(() =>
         clientId.value
-            ? `npx wrangler r2 object delete ${r2BucketName}/${filename.value}${isLocalR2 ? " --local" : ""}`
+            ? `npx wrangler r2 object delete ${r2BucketName}/${filename.value}${isLocalR2 ? " --local" : "--remote"}`
             : "",
     );
 
@@ -122,10 +122,9 @@ export default function ClientsForm({ r2BucketName, isLocalR2, clients }: Props)
                         The client <code>{clientId.value}</code> already exists. To delete it:
                     </p>
 
-                    <div class="command-output">
+                    <div>
                         <pre>{wranglerDeleteCommand.value}</pre>
                         <button
-                            class="copy-button"
                             onClick={() =>
                                 navigator.clipboard.writeText(wranglerDeleteCommand.value)
                             }
@@ -157,10 +156,9 @@ export default function ClientsForm({ r2BucketName, isLocalR2, clients }: Props)
                             <li>Download the JSON file using the button above</li>
                             <li>
                                 Upload to R2 with this command:
-                                <div class="command-output">
+                                <div>
                                     <pre>{wranglerUploadCommand.value}</pre>
                                     <button
-                                        class="copy-button"
                                         onClick={() =>
                                             navigator.clipboard.writeText(
                                                 wranglerUploadCommand.value,

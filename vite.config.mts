@@ -23,6 +23,7 @@ export default defineConfig({
                 "authorize-external": path.resolve("app/pages/authorize-external/index.html"),
             },
         },
+        sourcemap: true,
         modulePreload: false,
     },
 });

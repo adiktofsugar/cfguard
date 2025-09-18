@@ -86,8 +86,7 @@ export default function App({ backendData }: AppProps) {
                                 </td>
                                 <td>
                                     <code>
-                                        GET
-                                        {location.origin}/.well-known/openid-configuration
+                                        GET {location.origin}/.well-known/openid-configuration
                                     </code>
                                 </td>
                                 <td>Provider metadata and endpoint URLs</td>
